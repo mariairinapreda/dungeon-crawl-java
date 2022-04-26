@@ -25,6 +25,18 @@ public class MapLoader {
                         case ' ':
                             cell.setType(CellType.EMPTY);
                             break;
+                        case 'W':
+                            cell.setType(CellType.KEY);
+                            break;
+                        case 'M':
+                            cell.setType(CellType.WALLY);
+                            break;
+                        case 'K':
+                            cell.setType(CellType.SHIELD);
+                            break;
+                        case 'O':
+                            cell.setType(CellType.HEALTH);
+                            break;
                         case '#':
                             cell.setType(CellType.WALL);
                             break;
