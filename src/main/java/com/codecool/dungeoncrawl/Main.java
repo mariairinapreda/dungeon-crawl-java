@@ -3,17 +3,21 @@ package com.codecool.dungeoncrawl;
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+
 
 public class Main extends Application {
     GameMap map = MapLoader.loadMap();
@@ -22,6 +26,13 @@ public class Main extends Application {
             map.getHeight() * Tiles.TILE_WIDTH);
     GraphicsContext context = canvas.getGraphicsContext2D();
     Label healthLabel = new Label();
+    Label strengthLabel = new Label();
+    Label shieldLabel = new Label();
+    Label keyLabel = new Label();
+    Button button=new Button("Accept");
+
+
+
 
     public static void main(String[] args) {
         launch(args);
@@ -33,8 +44,17 @@ public class Main extends Application {
         ui.setPrefWidth(200);
         ui.setPadding(new Insets(10));
 
+
         ui.add(new Label("Health: "), 0, 0);
         ui.add(healthLabel, 1, 0);
+        ui.add(new Label("Strength: "), 0, 2);
+        ui.add(strengthLabel, 1, 2);
+        ui.add(new Label("Shield: "), 0, 4);
+        ui.add(shieldLabel, 1, 4);
+        ui.add(new Label("Key: "), 0, 6);
+        ui.add(keyLabel, 1, 6);
+//        ui.add(button, 0,8);
+
 
         BorderPane borderPane = new BorderPane();
 
@@ -45,6 +65,9 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
+//        button.setOnAction(actionEvent -> {
+//
+//        });
 
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
@@ -85,5 +108,8 @@ public class Main extends Application {
             }
         }
         healthLabel.setText("" + map.getPlayer().getHealth());
+        strengthLabel.setText("" + map.getPlayer().getStrength());
+        shieldLabel.setText("" + map.getPlayer().getSheild());
+        keyLabel.setText("" + map.getPlayer().hasKey());
     }
 }
