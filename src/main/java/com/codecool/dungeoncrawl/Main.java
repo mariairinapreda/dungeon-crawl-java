@@ -1,9 +1,11 @@
 package com.codecool.dungeoncrawl;
 
 import com.codecool.dungeoncrawl.logic.Cell;
+import com.codecool.dungeoncrawl.logic.CellType;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 
+import com.codecool.dungeoncrawl.logic.actors.Player;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -18,6 +20,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.util.Objects;
+
 
 public class Main extends Application {
     GameMap map = MapLoader.loadMap();
@@ -29,10 +33,8 @@ public class Main extends Application {
     Label strengthLabel = new Label();
     Label shieldLabel = new Label();
     Label keyLabel = new Label();
+    Label maceLabel = new Label();
     Button button=new Button("Accept");
-
-
-
 
     public static void main(String[] args) {
         launch(args);
@@ -43,17 +45,51 @@ public class Main extends Application {
         GridPane ui = new GridPane();
         ui.setPrefWidth(200);
         ui.setPadding(new Insets(10));
-
-
         ui.add(new Label("Health: "), 0, 0);
         ui.add(healthLabel, 1, 0);
         ui.add(new Label("Strength: "), 0, 2);
         ui.add(strengthLabel, 1, 2);
         ui.add(new Label("Shield: "), 0, 4);
         ui.add(shieldLabel, 1, 4);
-        ui.add(new Label("Key: "), 0, 6);
-        ui.add(keyLabel, 1, 6);
-//        ui.add(button, 0,8);
+        ui.add(new Label("Mace: "), 0, 6);
+        ui.add(maceLabel, 1, 6);
+        ui.add(new Label("Key: "), 0, 8);
+        ui.add(keyLabel, 1, 8);
+        ui.add(button, 0,9);
+        button.setFocusTraversable(false);
+        button.setOnAction(actionEvent -> {
+            System.out.println("merge butonul");
+
+            int x =map.getPlayer().getCell().getX();
+            int y = map.getPlayer().getCell().getY();
+            if(map.getPlayer().getCell() ==
+                    ((Objects.equals(map.getCell(x, y).getTileName(), "key") ? map.getCell(x,y): ""))){
+                System.out.println("am gasit cheia");
+                map.getCell(x, y).setType(CellType.FLOOR);
+                map.getPlayer().setHasKey(true);
+            }
+            if(map.getPlayer().getCell() ==
+                    ((Objects.equals(map.getCell(x, y).getTileName(), "shield") ? map.getCell(x,y): ""))){
+                System.out.println("am gasit scutul");
+                map.getCell(x, y).setType(CellType.FLOOR);
+                int oneShield = 1;
+                map.getPlayer().setShield(map.getPlayer().getSheild()+oneShield);
+            }
+            if(map.getPlayer().getCell() ==
+                    ((Objects.equals(map.getCell(x, y).getTileName(), "health") ? map.getCell(x,y): ""))){
+                System.out.println("am gasit potiunea");
+                map.getCell(x, y).setType(CellType.FLOOR);
+                int potion = 10;
+                map.getPlayer().setStrength(map.getPlayer().getStrength()+potion);
+            }
+            if(map.getPlayer().getCell() ==
+                    ((Objects.equals(map.getCell(x, y).getTileName(), "mace") ? map.getCell(x,y): ""))){
+                System.out.println("am gasit buzduganul");
+                map.getCell(x, y).setType(CellType.FLOOR);
+                int mace = 1;
+                map.getPlayer().setMace(map.getPlayer().getMace()+mace);
+            }
+        });
 
 
         BorderPane borderPane = new BorderPane();
@@ -65,9 +101,6 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
-//        button.setOnAction(actionEvent -> {
-//
-//        });
 
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
@@ -110,6 +143,7 @@ public class Main extends Application {
         healthLabel.setText("" + map.getPlayer().getHealth());
         strengthLabel.setText("" + map.getPlayer().getStrength());
         shieldLabel.setText("" + map.getPlayer().getSheild());
-        keyLabel.setText("" + map.getPlayer().hasKey());
+        maceLabel.setText("" + map.getPlayer().getMace());
+        keyLabel.setText("" + map.getPlayer().isHasKey());
     }
 }

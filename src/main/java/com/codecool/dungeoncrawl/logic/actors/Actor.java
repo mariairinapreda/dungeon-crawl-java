@@ -18,10 +18,16 @@ public abstract class Actor implements Drawable {
 
     public void move(int dx, int dy) {
         Cell nextCell = cell.getNeighbor(dx, dy);
-        if(!Objects.equals(nextCell.getTileName(), "wall")){
+        if(!Objects.equals(nextCell.getTileName(), "wall") &&
+                !Objects.equals(nextCell.getTileName(), "empty") &&
+                nextCell.getActor() == null ){
         cell.setActor(null);
         nextCell.setActor(this);
         cell = nextCell;}
+    }
+
+    public void setStrength(int strength) {
+        this.strength = strength;
     }
 
     public int getHealth() {
@@ -32,6 +38,10 @@ public abstract class Actor implements Drawable {
     }
     public int getSheild() {
         return shield;
+    }
+
+    public void setShield(int shield) {
+        this.shield = shield;
     }
 
     public Cell getCell() {
