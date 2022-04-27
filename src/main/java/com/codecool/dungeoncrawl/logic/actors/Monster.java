@@ -17,7 +17,7 @@ public class Monster extends Actor{
 
     @Override
     public void move(int dx, int dy) {
-        super.move(dx, dy);
+
 
 
 

@@ -31,17 +31,23 @@ public class Player extends Actor {
     public void setHasKey(boolean hasKey) {
         this.hasKey = hasKey;
     }
-    public int getMace() {
-        return mace;
+    public int getStrength() {
+        return strength;
     }
 
-    public void setMace(int mace) {
-        this.mace = mace;
+    public void setStrength(int strength) {
+        this.strength = strength;
     }
     @Override
     public void move(int dx, int dy) {
-        super.move(dx, dy);
-//        if(Objects.equals(cell.getNeighbor(dx, dy).getType().getTileName(), "key")){
+            Cell nextCell = cell.getNeighbor(dx, dy);
+            if(!Objects.equals(nextCell.getTileName(), "wall") &&
+                    !Objects.equals(nextCell.getTileName(), "empty") &&
+                    nextCell.getActor() == null ){
+                cell.setActor(null);
+                nextCell.setActor(this);
+                cell = nextCell;}
+        //        if(Objects.equals(cell.getNeighbor(dx, dy).getType().getTileName(), "key")){
 //            System.out.println("here is the key");
 //        }
 //        if(Objects.equals(cell.getNeighbor(dx, dy).getType().getTileName(), "shield")){

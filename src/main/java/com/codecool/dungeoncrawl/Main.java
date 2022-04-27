@@ -33,7 +33,6 @@ public class Main extends Application {
     Label strengthLabel = new Label();
     Label shieldLabel = new Label();
     Label keyLabel = new Label();
-    Label maceLabel = new Label();
     Button button=new Button("Accept");
 
     public static void main(String[] args) {
@@ -51,8 +50,6 @@ public class Main extends Application {
         ui.add(strengthLabel, 1, 2);
         ui.add(new Label("Shield: "), 0, 4);
         ui.add(shieldLabel, 1, 4);
-        ui.add(new Label("Mace: "), 0, 6);
-        ui.add(maceLabel, 1, 6);
         ui.add(new Label("Key: "), 0, 8);
         ui.add(keyLabel, 1, 8);
         ui.add(button, 0,9);
@@ -80,14 +77,14 @@ public class Main extends Application {
                 System.out.println("am gasit potiunea");
                 map.getCell(x, y).setType(CellType.FLOOR);
                 int potion = 10;
-                map.getPlayer().setStrength(map.getPlayer().getStrength()+potion);
+                map.getPlayer().setHealth(map.getPlayer().getHealth()+potion);
             }
             if(map.getPlayer().getCell() ==
                     ((Objects.equals(map.getCell(x, y).getTileName(), "mace") ? map.getCell(x,y): ""))){
                 System.out.println("am gasit buzduganul");
                 map.getCell(x, y).setType(CellType.FLOOR);
                 int mace = 1;
-                map.getPlayer().setMace(map.getPlayer().getMace()+mace);
+                map.getPlayer().setStrength(map.getPlayer().getStrength()+mace);
             }
         });
 
@@ -143,7 +140,6 @@ public class Main extends Application {
         healthLabel.setText("" + map.getPlayer().getHealth());
         strengthLabel.setText("" + map.getPlayer().getStrength());
         shieldLabel.setText("" + map.getPlayer().getSheild());
-        maceLabel.setText("" + map.getPlayer().getMace());
         keyLabel.setText("" + map.getPlayer().isHasKey());
     }
 }
