@@ -8,7 +8,7 @@ public class GameMap {
     private int height;
 
 
-    private int actualMap;
+    private int actualMap = 1;
     private Cell[][] cells;
 
     private Player player;

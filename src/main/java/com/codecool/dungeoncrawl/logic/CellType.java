@@ -9,7 +9,8 @@ public enum CellType {
     HEALTH("health"),
     KEY("key"),
     MONSTER("monster"),
-    DOOR("door");
+    DOOR("door"),
+    OCEAN("ocean");
 
 
     private final String tileName;

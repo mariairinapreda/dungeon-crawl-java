@@ -35,6 +35,9 @@ public class MapLoader {
                         case 'K':
                             cell.setType(CellType.SHIELD);
                             break;
+                        case 'P':
+                                cell.setType(CellType.OCEAN);
+                            break;
                         case 'E':
                             cell.setType(CellType.MONSTER);
                             map.setMonster(new Monster(cell));

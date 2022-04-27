@@ -20,8 +20,17 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
+import javax.sound.sampled.AudioInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -37,7 +46,6 @@ public class Main extends Application {
     Label shieldLabel = new Label();
     Label keyLabel = new Label();
     Button button=new Button("Accept");
-
     public static void main(String[] args) {
         launch(args);
     }
@@ -56,6 +64,7 @@ public class Main extends Application {
         ui.add(new Label("Key: "), 0, 8);
         ui.add(keyLabel, 1, 8);
         ui.add(button, 0,9);
+        sound();
         button.setFocusTraversable(false);
         button.setOnAction(actionEvent -> {
             System.out.println("merge butonul");
@@ -98,6 +107,7 @@ public class Main extends Application {
         borderPane.setCenter(canvas);
         borderPane.setRight(ui);
 
+
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
         refresh();
@@ -106,6 +116,22 @@ public class Main extends Application {
 
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
+    }
+//    public void sound() throws MalformedURLException {
+////        File mediaFile = new File("//home/ioana/Downloads/videoplayback.mp3");
+//        File mediaFile = new File("src/main/resources/videoplayback.mp3");
+//        Media media = new Media(mediaFile.toURI().toURL().toString());
+////        Media media = new Media(getClass().getResource("/videoplayback.mp3").toExternalForm());
+//        MediaPlayer mediaPlayer = new MediaPlayer(media);
+//        mediaPlayer.play();
+//    }
+
+    public void sound() throws MalformedURLException {
+        File mediaFile = new File("src/main/resources/videoplayback.mp3");
+        System.out.println(mediaFile.getAbsolutePath());
+        Media media = new Media(mediaFile.toURI().toURL().toString());
+        MediaPlayer mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.play();
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
@@ -127,8 +153,13 @@ public class Main extends Application {
                 refresh();
                 break;
         }
-        if(map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()){
+        if(map.getActualMap() == 1 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()){
             map = MapLoader.loadMap("/map2.txt");
+            map.setActualMap(2);
+        }
+        if(map.getActualMap() == 2 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()){
+            map = MapLoader.loadMap("/map3.txt");
+            map.setActualMap(3);
         }
     }
 
