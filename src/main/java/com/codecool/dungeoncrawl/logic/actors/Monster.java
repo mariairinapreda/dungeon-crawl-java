@@ -17,7 +17,8 @@ public class Monster extends Actor{
 
     @Override
     public void setHealth(int health) {
-        this.health = health;
+        this.health =health;
+
     }
 
     @Override

@@ -6,19 +6,33 @@ import java.util.Objects;
 
 public class Player extends Actor {
 
-    private int health;
-    private int strength;
+
+
+    private  int health=10;
+    private int strength=5;
     private boolean hasKey;
-    private int mace;
+
+    public void setCell(Cell cell) {
+        this.cell = cell;
+    }
+
     private Cell cell;
 
     public Player(Cell cell) {
         super(cell);
-        this.cell=cell;
-        this.health=10;
-        this.strength=5;
+
+
     }
 
+    @Override
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    @Override
+    public int getHealth() {
+        return health;
+    }
 //    public void setCell(Cell newCell) {
 //        cell = newCell;
 //
@@ -62,22 +76,24 @@ public class Player extends Actor {
                 cell.setActor(null);
                 nextCell.setActor(this);
                 cell = nextCell;}
-            else if( nextCell.getActor() != null){if( Objects.equals(nextCell.getActor().getTileName(), "skeleton")){
-                if(health>=nextCell.getActor().getStrength()){
-                    setHealth(health-2);
-                    nextCell.getActor().setHealth(health-10);
-
-                }
+            else if( nextCell.getActor() != null &&  Objects.equals(nextCell.getActor().getTileName(), "skeleton")){
+                   attack(nextCell);
             }
-            else if( Objects.equals(nextCell.getActor().getTileName(), "monster")){
-                System.out.println("monster");
-                if(health>=nextCell.getActor().getStrength()){
-                    setHealth(health-2);
-                    nextCell.getActor().setHealth(health-10);
+            else if( nextCell.getActor() != null &&  Objects.equals(nextCell.getActor().getTileName(), "monster")){
+                   attack(nextCell);
 
-                }
             }
             }
 
+
+    public void attack(Cell nextCell){
+        setHealth(health-2);
+        nextCell.getActor().setHealth(health-10);
+        if(nextCell.getActor().getHealth()>=0){
+            nextCell.setActor(null);
+            cell.setActor(null);
+            nextCell.setActor(this);
+            cell = nextCell;
+        }
     }
 }

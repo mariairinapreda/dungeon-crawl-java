@@ -6,7 +6,7 @@ import com.codecool.dungeoncrawl.logic.Drawable;
 import java.util.Objects;
 
 public abstract class Actor implements Drawable {
-    private Cell cell;
+    protected Cell cell;
     private int shield;
     private int strength;
 
@@ -15,6 +15,7 @@ public abstract class Actor implements Drawable {
     public Actor(Cell cell) {
         this.cell = cell;
         this.cell.setActor(this);
+
     }
 
 //    public void move(int dx, int dy) {
