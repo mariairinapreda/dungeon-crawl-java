@@ -10,6 +10,7 @@ public abstract class Actor implements Drawable {
     private int shield;
     private int strength;
 
+
     private int health;
 
     public Actor(Cell cell) {
