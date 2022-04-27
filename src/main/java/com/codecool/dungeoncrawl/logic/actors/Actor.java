@@ -6,9 +6,10 @@ import com.codecool.dungeoncrawl.logic.Drawable;
 import java.util.Objects;
 
 public abstract class Actor implements Drawable {
-    private Cell cell;
+    protected Cell cell;
     private int shield;
     private int strength;
+
 
     private int health;
 

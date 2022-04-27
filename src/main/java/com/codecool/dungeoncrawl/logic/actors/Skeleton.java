@@ -30,8 +30,6 @@ public class Skeleton extends Actor {
 
     public Skeleton(Cell cell) {
         super(cell);
-        this.health=5;
-        this.strength=2;
     }
 
     @Override

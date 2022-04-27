@@ -56,9 +56,10 @@ public class Main extends Application {
         button.setFocusTraversable(false);
         button.setOnAction(actionEvent -> {
             System.out.println("merge butonul");
-
             int x =map.getPlayer().getCell().getX();
             int y = map.getPlayer().getCell().getY();
+            System.out.println(x);
+            System.out.println(y);
             if(map.getPlayer().getCell() ==
                     ((Objects.equals(map.getCell(x, y).getTileName(), "key") ? map.getCell(x,y): ""))){
                 System.out.println("am gasit cheia");
