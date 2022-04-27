@@ -1,12 +1,13 @@
 package com.codecool.dungeoncrawl.logic.actors;
 
 import com.codecool.dungeoncrawl.logic.Cell;
+import com.codecool.dungeoncrawl.logic.CellType;
 
 import java.util.Objects;
 
 public class Player extends Actor {
 
-    private int health = 10;
+    private int health = 20;
     private int strength = 5;
     private boolean hasKey;
 
@@ -75,15 +76,20 @@ public class Player extends Actor {
     }
 
     private void attack(Cell nextCell) {
-        if(cell.getActor().getHealth()>=nextCell.getActor().getStrength()){
-            cell.getActor().setHealth(cell.getActor().getHealth()-2);
-            nextCell.getActor().setHealth(nextCell.getActor().getHealth()-10);
+//        if(cell.getActor().getHealth()>=nextCell.getActor().getStrength()){
+            cell.getActor().setHealth(cell.getActor().getHealth()-nextCell.getActor().getStrength());
+            nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
             if(nextCell.getActor().getHealth() == 0){
                 nextCell.setActor(null);
+                nextCell.setType(CellType.FLOOR);
                 cell.setActor(null);
                 nextCell.setActor(this);
                 cell = nextCell;
-            }
+//            }
         }
+    }
+    public boolean isDead(){
+        if(health>0)return false;
+        else return true;
     }
 }

@@ -138,6 +138,10 @@ public class Main extends Application {
                 }
             }
         }
+        if(map.getPlayer().isDead()){
+            System.out.println("you lost");
+            System.exit(0);
+        }
         healthLabel.setText("" + map.getPlayer().getHealth());
         strengthLabel.setText("" + map.getPlayer().getStrength());
         shieldLabel.setText("" + map.getPlayer().getSheild());

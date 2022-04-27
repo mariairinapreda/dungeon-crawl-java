@@ -4,9 +4,9 @@ import com.codecool.dungeoncrawl.logic.Cell;
 
 
 public class Monster extends Actor{
-    private Cell cell;
-    private int health=10;
-    private int strength=2;
+
+    private int health=15;
+    private int strength=5;
 
 
 
