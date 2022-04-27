@@ -6,6 +6,7 @@ import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 
 import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.codecool.dungeoncrawl.logic.actors.Skeleton;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -20,11 +21,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.io.InputStream;
 import java.util.Objects;
+import java.util.Scanner;
 
 
 public class Main extends Application {
-    GameMap map = MapLoader.loadMap();
+    GameMap map = MapLoader.loadMap("/map.txt");
     Canvas canvas = new Canvas(
             map.getWidth() * Tiles.TILE_WIDTH,
             map.getHeight() * Tiles.TILE_WIDTH);
@@ -100,6 +103,7 @@ public class Main extends Application {
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
 
+
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
     }
@@ -122,6 +126,9 @@ public class Main extends Application {
                 map.getPlayer().move(1,0);
                 refresh();
                 break;
+        }
+        if(map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()){
+            map = MapLoader.loadMap("/map2.txt");
         }
     }
 
@@ -146,5 +153,7 @@ public class Main extends Application {
         strengthLabel.setText("" + map.getPlayer().getStrength());
         shieldLabel.setText("" + map.getPlayer().getSheild());
         keyLabel.setText("" + map.getPlayer().isHasKey());
+
+
     }
 }

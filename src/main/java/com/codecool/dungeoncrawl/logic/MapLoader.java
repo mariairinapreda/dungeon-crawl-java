@@ -8,8 +8,8 @@ import java.io.InputStream;
 import java.util.Scanner;
 
 public class MapLoader {
-    public static GameMap loadMap() {
-        InputStream is = MapLoader.class.getResourceAsStream("/map.txt");
+    public static GameMap loadMap(String name) {
+        InputStream is = MapLoader.class.getResourceAsStream(name);
         Scanner scanner = new Scanner(is);
         int width = scanner.nextInt();
         int height = scanner.nextInt();
@@ -37,6 +37,7 @@ public class MapLoader {
                             break;
                         case 'E':
                             cell.setType(CellType.MONSTER);
+                            map.setMonster(new Monster(cell));
                             new Monster(cell);
                             break;
                         case 'O':
@@ -47,6 +48,9 @@ public class MapLoader {
                             break;
                         case '.':
                             cell.setType(CellType.FLOOR);
+                            break;
+                        case 'D':
+                            cell.setType(CellType.DOOR);
                             break;
                         case 's':
                             cell.setType(CellType.FLOOR);

@@ -2,6 +2,8 @@ package com.codecool.dungeoncrawl.logic.actors;
 
 import com.codecool.dungeoncrawl.logic.Cell;
 
+import java.util.Objects;
+
 
 public class Monster extends Actor{
 
@@ -42,6 +44,13 @@ public class Monster extends Actor{
 
 
     public void move(int dx, int dy) {
+        Cell nextCell = cell.getNeighbor(dx, dy);
+        if(!Objects.equals(nextCell.getTileName(), "wall") &&
+                !Objects.equals(nextCell.getTileName(), "empty") &&
+                nextCell.getActor() == null ){
+        cell.setActor(null);
+        nextCell.setActor(this);
+        cell = nextCell;}
 
 
 

@@ -2,6 +2,7 @@ package com.codecool.dungeoncrawl.logic.actors;
 
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.CellType;
+import com.codecool.dungeoncrawl.logic.GameMap;
 
 import java.util.Objects;
 
@@ -48,6 +49,13 @@ public class Player extends Actor {
         this.health = health;
     }
 
+    public void openDoor(){
+        cell.getDoor().setOpen();
+    }
+    public boolean standingOnDoor(){
+        return cell.getType() == CellType.DOOR;
+    }
+
     public void move(int dx, int dy) {
             Cell nextCell = cell.getNeighbor(dx, dy);
             if(!Objects.equals(nextCell.getTileName(), "wall") &&
@@ -72,12 +80,15 @@ public class Player extends Actor {
             else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "monster")){
                 attack(nextCell);
             }
-
+//            else if (isHasKey() && standingOnDoor()){
+//            openDoor();
+//        }
     }
 
     private void attack(Cell nextCell) {
-//        if(cell.getActor().getHealth()>=nextCell.getActor().getStrength()){
-            cell.getActor().setHealth(cell.getActor().getHealth()-nextCell.getActor().getStrength());
+            if(nextCell.getActor().getHealth() > 5){
+                cell.getActor().setHealth(cell.getActor().getHealth()-nextCell.getActor().getStrength());
+            }
             nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
             if(nextCell.getActor().getHealth() == 0){
                 nextCell.setActor(null);
@@ -85,11 +96,10 @@ public class Player extends Actor {
                 cell.setActor(null);
                 nextCell.setActor(this);
                 cell = nextCell;
-//            }
+            }
         }
-    }
     public boolean isDead(){
-        if(health>0)return false;
-        else return true;
+        return health<0;
     }
+
 }
