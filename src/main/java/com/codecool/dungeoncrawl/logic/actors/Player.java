@@ -7,17 +7,14 @@ import java.util.Objects;
 public class Player extends Actor {
     private int strength;
     private boolean hasKey;
-    private int mace;
     private Cell cell;
 
     public Player(Cell cell) {
         super(cell);
+        this.cell =cell;
     }
 
-//    public void setCell(Cell newCell) {
-//        cell = newCell;
-//
-//    }
+
     
     public String getTileName() {
         return "player";
@@ -44,17 +41,19 @@ public class Player extends Actor {
             if(!Objects.equals(nextCell.getTileName(), "wall") &&
                     !Objects.equals(nextCell.getTileName(), "empty") &&
                     nextCell.getActor() == null ){
+                if(Objects.equals(cell.getNeighbor(dx, dy).getTileName(), "key")){
+                    System.out.println("here is the key");
+                }
+                if(Objects.equals(cell.getNeighbor(dx, dy).getTileName(), "shield")){
+                    System.out.println("here is the shield");
+                }
+                if(Objects.equals(cell.getNeighbor(dx, dy).getTileName(), "health")){
+                    System.out.println("here is the health potion");
+                }
                 cell.setActor(null);
                 nextCell.setActor(this);
                 cell = nextCell;}
-        //        if(Objects.equals(cell.getNeighbor(dx, dy).getType().getTileName(), "key")){
-//            System.out.println("here is the key");
-//        }
-//        if(Objects.equals(cell.getNeighbor(dx, dy).getType().getTileName(), "shield")){
-//            System.out.println("here is the shield");
-//        }
-//        if(Objects.equals(cell.getNeighbor(dx, dy).getType().getTileName(), "health")){
-//            System.out.println("here is the health potion");
-//        }
+
+
     }
 }
