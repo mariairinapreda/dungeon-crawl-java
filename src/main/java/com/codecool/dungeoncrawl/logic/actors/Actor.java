@@ -10,7 +10,7 @@ public abstract class Actor implements Drawable {
     private int shield;
     private int strength;
 
-    private int health = 10;
+    private int health;
 
     public Actor(Cell cell) {
         this.cell = cell;
@@ -27,7 +27,7 @@ public abstract class Actor implements Drawable {
 //        cell = nextCell;}
 //    }
 
-    public abstract void move(int dx, int dy);
+    abstract void move(int dx, int dy);
 
 
     public void setStrength(int strength) {
