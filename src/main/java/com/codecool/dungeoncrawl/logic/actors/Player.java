@@ -72,6 +72,9 @@ public class Player extends Actor {
             else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "monster")){
                 attack(nextCell);
             }
+            else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "ghost")){
+                attack(nextCell);
+            }
 
     }
 
@@ -88,6 +91,9 @@ public class Player extends Actor {
 //            }
         }
     }
+
+
+
     public boolean isDead(){
         if(health>0)return false;
         else return true;

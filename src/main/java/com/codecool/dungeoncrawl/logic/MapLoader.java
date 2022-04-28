@@ -1,5 +1,6 @@
 package com.codecool.dungeoncrawl.logic;
 
+import com.codecool.dungeoncrawl.logic.actors.Ghost;
 import com.codecool.dungeoncrawl.logic.actors.Monster;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.logic.actors.Skeleton;
@@ -35,9 +36,17 @@ public class MapLoader {
                         case 'K':
                             cell.setType(CellType.SHIELD);
                             break;
+                        case 'T':
+                            cell.setType(CellType.TELEPORT);
+                            map.setTeleport(new Teleport());
+                            break;
                         case 'E':
-                            cell.setType(CellType.MONSTER);
-                            new Monster(cell);
+                            cell.setType(CellType.FLOOR);
+                            map.setMonster(new Monster(cell));
+                            break;
+                        case 'G':
+                            cell.setType(CellType.FLOOR);
+                            map.setGhost(new Ghost(cell));
                             break;
                         case 'O':
                             cell.setType(CellType.HEALTH);

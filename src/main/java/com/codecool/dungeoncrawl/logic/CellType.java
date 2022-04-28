@@ -8,7 +8,8 @@ public enum CellType {
     SHIELD("shield"),
     HEALTH("health"),
     KEY("key"),
-    MONSTER("monster");
+    MONSTER("monster"),
+    TELEPORT("teleport");
 
 
     private final String tileName;

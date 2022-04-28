@@ -1,9 +1,6 @@
 package com.codecool.dungeoncrawl;
 
-import com.codecool.dungeoncrawl.logic.Cell;
-import com.codecool.dungeoncrawl.logic.CellType;
-import com.codecool.dungeoncrawl.logic.GameMap;
-import com.codecool.dungeoncrawl.logic.MapLoader;
+import com.codecool.dungeoncrawl.logic.*;
 
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import javafx.application.Application;
@@ -11,7 +8,9 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
@@ -34,6 +33,9 @@ public class Main extends Application {
     Label shieldLabel = new Label();
     Label keyLabel = new Label();
     Button button=new Button("Accept");
+
+
+
 
     public static void main(String[] args) {
         launch(args);
@@ -58,8 +60,6 @@ public class Main extends Application {
             System.out.println("merge butonul");
             int x =map.getPlayer().getCell().getX();
             int y = map.getPlayer().getCell().getY();
-            System.out.println(x);
-            System.out.println(y);
             if(map.getPlayer().getCell() ==
                     ((Objects.equals(map.getCell(x, y).getTileName(), "key") ? map.getCell(x,y): ""))){
                 System.out.println("am gasit cheia");
@@ -87,6 +87,7 @@ public class Main extends Application {
                 int mace = 1;
                 map.getPlayer().setStrength(map.getPlayer().getStrength()+mace);
             }
+
         });
 
 
@@ -103,23 +104,66 @@ public class Main extends Application {
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
     }
+    private void showAlertWithHeaderText() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("GAME INFO");
+        alert.setHeaderText("Results:");
+        alert.setContentText("YOU LOST!");
 
+        alert.showAndWait();
+    }
+
+
+    public void moveToward() {
+        int  leftDist = map.getGhost().getX() - map.getPlayer().getX();
+        int upDist = map.getGhost().getY() - map.getPlayer().getY();
+        if (upDist == 0 && leftDist == 0) {
+            return;
+        } if (upDist > 0 && upDist >= leftDist) {
+            map.getGhost().move(0,-1);
+        } else if (upDist < 0 && upDist < leftDist) {
+            map.getGhost().move(0,1);
+        } else if (leftDist > 0 && leftDist >= upDist) {
+            map.getGhost().move(-1,0);
+        } else {
+            map.getGhost().move(1,0);
+        }
+
+
+    }
     private void onKeyPressed(KeyEvent keyEvent) {
+
         switch (keyEvent.getCode()) {
             case UP:
-                map.getPlayer().move(0, -1);
+                if(canTeleport()!=null){map.getPlayer().move(canTeleport().getX()+1,canTeleport().getY()+1);}
+               else{
+                map.getPlayer().move(0, -1);}
+                moveToward();
+                map.getMonster().move(0,-1);
                 refresh();
                 break;
             case DOWN:
-                map.getPlayer().move(0, 1);
+                if(canTeleport()!=null){map.getPlayer().move(canTeleport().getX()+1,canTeleport().getY()+1);}
+else{
+                map.getPlayer().move(0, 1);}
+                moveToward();
+                map.getMonster().move(0, 1);
                 refresh();
                 break;
             case LEFT:
-                map.getPlayer().move(-1, 0);
+                if(canTeleport()!=null){map.getPlayer().move(canTeleport().getX()+1,canTeleport().getY()+1);}
+                else{
+                map.getPlayer().move(-1, 0);}
+                moveToward();
+                map.getMonster().move(-1, 0);
                 refresh();
                 break;
             case RIGHT:
-                map.getPlayer().move(1,0);
+                if(canTeleport()!=null){map.getPlayer().move(canTeleport().getX()+1,canTeleport().getY()+1);}
+                else{
+                map.getPlayer().move(1,0);}
+                moveToward();
+                map.getMonster().move(1,0);
                 refresh();
                 break;
         }
@@ -139,12 +183,23 @@ public class Main extends Application {
             }
         }
         if(map.getPlayer().isDead()){
-            System.out.println("you lost");
-            System.exit(0);
+            showAlertWithHeaderText();
         }
         healthLabel.setText("" + map.getPlayer().getHealth());
         strengthLabel.setText("" + map.getPlayer().getStrength());
         shieldLabel.setText("" + map.getPlayer().getSheild());
         keyLabel.setText("" + map.getPlayer().isHasKey());
     }
+
+
+    public Cell canTeleport(){
+        Teleport teleport=map.getTeleport();
+        Teleport teleport2=map.getTeleport();
+        if(map.getPlayer().getCell().getNeighbor(map.getPlayer().getX(),map.getPlayer().getY())==map.getCell(teleport.getCellforT().getX(),teleport.getCellforT().getY()))
+        return teleport.getCellforT();
+         else  if(map.getPlayer().getCell().getNeighbor(map.getPlayer().getX(),map.getPlayer().getY())==map.getCell(teleport2.getCellforT().getX(),teleport2.getCellforT().getY()))
+        return teleport2.getCellforT();
+    else return null;
+    }
+
 }
