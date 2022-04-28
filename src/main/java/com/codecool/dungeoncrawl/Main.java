@@ -297,7 +297,7 @@ if(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equ
 
     private void refresh() {
         context.setFill(Color.BLACK);
-        int screenX = map.getPlayer().getX() / 2- 1;
+        int screenX = map.getPlayer().getX() / 2 - 1;
         int screenY = map.getPlayer().getY() / 2 - 1;
 
         context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
@@ -314,7 +314,7 @@ if(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equ
                 }
             }
         }
-        if(map.getPlayer().isDead()){
+        if (map.getPlayer().isDead()) {
             System.out.println("you lost");
             System.exit(0);
         }
@@ -322,30 +322,8 @@ if(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equ
         strengthLabel.setText("" + map.getPlayer().getStrength());
         shieldLabel.setText("" + map.getPlayer().getSheild());
         keyLabel.setText("" + map.getPlayer().isHasKey());
-        private void refresh () {
-            context.setFill(Color.BLACK);
-            context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-            for (int x = 0; x < map.getWidth(); x++) {
-                for (int y = 0; y < map.getHeight(); y++) {
-                    Cell cell = map.getCell(x, y);
-                    if (cell.getActor() != null) {
-                        Tiles.drawTile(context, cell.getActor(), x, y);
-                    } else {
-                        Tiles.drawTile(context, cell, x, y);
-                    }
-                }
-            }
-            if (map.getPlayer().isDead()) {
-                showAlertWithHeaderText();
-            }
-            healthLabel.setText("" + map.getPlayer().getHealth());
-            strengthLabel.setText("" + map.getPlayer().getStrength());
-            shieldLabel.setText("" + map.getPlayer().getSheild());
-            keyLabel.setText("" + map.getPlayer().isHasKey());
 
-
-        }
-
+    }
 
         public Cell canTeleport (Cell cellt) {
             Cell cellTeleport=map.getTeleportPrecise(3,18);
