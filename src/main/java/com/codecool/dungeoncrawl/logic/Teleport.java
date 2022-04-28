@@ -2,6 +2,8 @@ package com.codecool.dungeoncrawl.logic;
 
 public class Teleport implements Drawable {
     private Cell cell;
+
+
     public Cell getCellforT() {
         return cell;
     }

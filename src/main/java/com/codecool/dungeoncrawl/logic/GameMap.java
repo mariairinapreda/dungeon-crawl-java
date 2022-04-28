@@ -22,6 +22,12 @@ public class GameMap {
         return teleport;
     }
 
+    public Cell getTeleportPrecise(int x,int y) {
+if(getCell(x,y).getTileName()=="teleport")
+        return getCell(x,y);
+        else return null;
+    }
+
     public void setTeleport(Teleport teleport) {
         this.teleport = teleport;
     }

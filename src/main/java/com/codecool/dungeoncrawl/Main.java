@@ -165,42 +165,50 @@ public class Main extends Application {
 
             switch (keyEvent.getCode()) {
                 case UP:
-                    if (canTeleport() != null) {
-                        map.getPlayer().moveToLocation(canTeleport());
+                    Cell cellTeleport=map.getPlayer().getCell().getNeighbor(0,-1 );
+                    if (canTeleport(cellTeleport) != null) {
+                        map.getPlayer().moveToLocation(canTeleport(cellTeleport));
                     } else {
                         map.getPlayer().move(0, -1);
                     }
+                    if(map.getGhost()!=null)
                     moveToward();
                     map.getMonster().move(0, -1);
                     refresh();
                     break;
                 case DOWN:
-                    if (canTeleport() != null) {
-                        map.getPlayer().moveToLocation(canTeleport());
+                    Cell cellTelepor=map.getPlayer().getCell().getNeighbor(0,1 );
+                    if (canTeleport(cellTelepor) != null) {
+                        map.getPlayer().moveToLocation(canTeleport(cellTelepor));
                     } else {
                         map.getPlayer().move(0, 1);
                     }
-                    moveToward();
+                    if(map.getGhost()!=null)
+                        moveToward();
                     map.getMonster().move(0, 1);
                     refresh();
                     break;
                 case LEFT:
-                    if (canTeleport() != null) {
-                        map.getPlayer().moveToLocation(canTeleport());
+                    Cell cellTelepo=map.getPlayer().getCell().getNeighbor(-1,0 );
+                    if (canTeleport(cellTelepo) != null) {
+                        map.getPlayer().moveToLocation(canTeleport(cellTelepo));
                     } else {
                         map.getPlayer().move(-1, 0);
                     }
-                    moveToward();
+                    if(map.getGhost()!=null)
+                        moveToward();
                     map.getMonster().move(-1, 0);
                     refresh();
                     break;
                 case RIGHT:
-                    if (canTeleport() != null) {
-                        map.getPlayer().moveToLocation(canTeleport());
+                    Cell cellTeleport2=map.getPlayer().getCell().getNeighbor(1,0 );
+                    if (canTeleport(cellTeleport2) != null) {
+                        map.getPlayer().moveToLocation(canTeleport(cellTeleport2));
                     } else {
                         map.getPlayer().move(1, 0);
                     }
-                    moveToward();
+                    if(map.getGhost()!=null)
+                        moveToward();
                     map.getMonster().move(1, 0);
                     refresh();
                     break;
@@ -240,13 +248,11 @@ public class Main extends Application {
         }
 
 
-        public Cell canTeleport () {
-            Teleport teleport = map.getTeleport();
-            Teleport teleport2 = map.getTeleport();
-            if (map.getPlayer().getCell().getNeighbor(map.getPlayer().getX(), map.getPlayer().getY()) == map.getCell(teleport.getCellforT().getX(), teleport.getCellforT().getY()))
-                return teleport.getCellforT();
-            else if (map.getPlayer().getCell().getNeighbor(map.getPlayer().getX(), map.getPlayer().getY()) == map.getCell(teleport2.getCellforT().getX(), teleport2.getCellforT().getY()))
-                return teleport2.getCellforT();
+        public Cell canTeleport (Cell cellt) {
+            Cell cellTeleport=map.getTeleportPrecise(3,18);
+            Cell toTeleport=map.getTeleportPrecise(18,17);
+            if (cellt == cellTeleport)
+                return toTeleport;
             else return null;
         }
 

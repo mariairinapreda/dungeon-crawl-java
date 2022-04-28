@@ -50,9 +50,9 @@ public class MapLoader {
                         case 'G':
                             cell.setType(CellType.FLOOR);
                             map.setGhost(new Ghost(cell));
-                            cell.setType(CellType.MONSTER);
-                            map.setMonster(new Monster(cell));
-                            new Monster(cell);
+//                            cell.setType(CellType.MONSTER);
+//                            map.setMonster(new Monster(cell));
+//                            new Monster(cell);
                             break;
                         case 'O':
                             cell.setType(CellType.HEALTH);
