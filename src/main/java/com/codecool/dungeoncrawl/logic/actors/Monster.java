@@ -10,8 +10,8 @@ import java.util.Objects;
 
 public class Monster extends Actor {
 
-    private int health = 15;
-    private int strength = 5;
+    private int health = 5;
+    private int strength = 2;
 
     @Override
     public Cell getCell() {
@@ -55,23 +55,23 @@ public class Monster extends Actor {
 
     public boolean canMove(int dx, int dy) {
         try{
-        Cell nextCell = cell.getNeighbor(dx, dy);
-        if (!Objects.equals(nextCell.getTileName(), "wall") &&
-                !Objects.equals(nextCell.getTileName(), "empty") &&
-                nextCell.getActor() == null) {
-            return true;
-        } else return false;
-    }catch (IndexOutOfBoundsException e){
-            return false;
-        }
+            Cell nextCell = cell.getNeighbor(dx, dy);
+            if (!Objects.equals(nextCell.getTileName(), "wall") &&
+                    !Objects.equals(nextCell.getTileName(), "empty") &&
+                    nextCell.getActor() == null) {
+                return true;
+            } else return false;
+        }catch (IndexOutOfBoundsException e){
+                return false;
+            }
     }
 
 
 
     public void move(int dx, int dy) {
-        cell.setActor(null);
-        cell.getNeighbor(dx, dy).setActor(this);
-        cell = cell.getNeighbor(dx, dy);
+            cell.setActor(null);
+            cell.getNeighbor(dx, dy).setActor(this);
+            cell = cell.getNeighbor(dx, dy);
     }
 
 

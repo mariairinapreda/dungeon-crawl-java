@@ -41,19 +41,15 @@ public class MapLoader {
                             map.setTeleport(new Teleport());
                             break;
                         case 'P':
-                                cell.setType(CellType.OCEAN);
+                            cell.setType(CellType.OCEAN);
                             break;
                         case 'E':
-                            cell.setType(CellType.FLOOR);
+                            cell.setType(CellType.MONSTER);
                             map.setMonster(new Monster(cell));
                             break;
                         case 'G':
-                            cell.setType(CellType.FLOOR);
+                            cell.setType(CellType.GHOST);
                             map.setGhost(new Ghost(cell));
-//                            cell.setType(CellType.MONSTER);
-//                            map.setMonster(new Monster(cell));
-//                            new Monster(cell);
-                            break;
                         case 'O':
                             cell.setType(CellType.HEALTH);
                             break;
@@ -67,7 +63,7 @@ public class MapLoader {
                             cell.setType(CellType.DOOR);
                             break;
                         case 's':
-                            cell.setType(CellType.FLOOR);
+                            cell.setType(CellType.SKELETON);
                             new Skeleton(cell);
                             break;
                         case '@':

@@ -5,26 +5,20 @@ import com.codecool.dungeoncrawl.logic.*;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.scene.PerspectiveCamera;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-
-import javafx.scene.Camera;
-import javax.sound.sampled.AudioInputStream;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Objects;
@@ -47,7 +41,6 @@ public class Main extends Application {
     GraphicsContext context = canvas.getGraphicsContext2D();
     Label healthLabel = new Label();
     Label strengthLabel = new Label();
-    Label shieldLabel = new Label();
     Label keyLabel = new Label();
     Button button=new Button("Accept");
     Label userName = new Label("Cheat:");
@@ -55,16 +48,11 @@ public class Main extends Application {
     Button cheatCode=new Button("OK");
     private String text;
 
-    public String getText() {
-        return text;
-    }
+
 
     public void setText(String text) {
         this.text = text;
     }
-
-
-
 
     public static void main(String[] args) {
         launch(args);
@@ -80,8 +68,6 @@ public class Main extends Application {
         ui.add(healthLabel, 1, 0);
         ui.add(new Label("Strength: "), 0, 2);
         ui.add(strengthLabel, 1, 2);
-        ui.add(new Label("Shield: "), 0, 4);
-        ui.add(shieldLabel, 1, 4);
         ui.add(new Label("Key: "), 0, 8);
         ui.add(keyLabel, 1, 8);
         ui.add(button, 0,9);
@@ -90,43 +76,35 @@ public class Main extends Application {
         ui.add(cheatCode,0,14);
         userTextField.requestFocus();
 
-
         cheatCode.setOnAction(actionEvent -> {
             setText(userTextField.getText());
             userTextField.setDisable(true);
         });
 
-
-
         sound();
         button.setFocusTraversable(false);
         button.setOnAction(actionEvent -> {
-            System.out.println("merge butonul");
             int x =map.getPlayer().getCell().getX();
             int y = map.getPlayer().getCell().getY();
             if(map.getPlayer().getCell() ==
                     ((Objects.equals(map.getCell(x, y).getTileName(), "key") ? map.getCell(x,y): ""))){
-                System.out.println("am gasit cheia");
                 map.getCell(x, y).setType(CellType.FLOOR);
                 map.getPlayer().setHasKey(true);
             }
             if(map.getPlayer().getCell() ==
                     ((Objects.equals(map.getCell(x, y).getTileName(), "shield") ? map.getCell(x,y): ""))){
-                System.out.println("am gasit scutul");
                 map.getCell(x, y).setType(CellType.FLOOR);
                 int oneShield = 1;
-                map.getPlayer().setShield(map.getPlayer().getSheild()+oneShield);
+                map.getPlayer().setStrength(map.getPlayer().getStrength()+oneShield);
             }
             if(map.getPlayer().getCell() ==
                     ((Objects.equals(map.getCell(x, y).getTileName(), "health") ? map.getCell(x,y): ""))){
-                System.out.println("am gasit potiunea");
                 map.getCell(x, y).setType(CellType.FLOOR);
                 int potion = 10;
                 map.getPlayer().setHealth(map.getPlayer().getHealth()+potion);
             }
             if(map.getPlayer().getCell() ==
                     ((Objects.equals(map.getCell(x, y).getTileName(), "mace") ? map.getCell(x,y): ""))){
-                System.out.println("am gasit buzduganul");
                 map.getCell(x, y).setType(CellType.FLOOR);
                 int mace = 1;
                 map.getPlayer().setStrength(map.getPlayer().getStrength()+mace);
@@ -136,10 +114,7 @@ public class Main extends Application {
 
 
         BorderPane borderPane = new BorderPane();
-//        int half = map.getHeight() /2  - map.getPlayer().getX();
         borderPane.setCenter(canvas);
-//        borderPane.setMaxSize(half, half);
-//        borderPane.setMinSize(half, half);
 
         borderPane.setRight(ui);
 
@@ -147,35 +122,12 @@ public class Main extends Application {
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
 
-
-
-//        final Camera camera = new PerspectiveCamera(true);
-//
-//        camera.setFarClip(1000);
-//        camera.setTranslateX(-15);
-//        camera.setTranslateY(-15);
-//        camera.setTranslateZ(-150);
-////        camera.setTranslateZ(-500);
-////        camera.setNearClip(0.1);
-////        camera.setFarClip(2000.0);
-
-
-//
-//        scene.setCamera(camera);
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
 
 
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
-    }
-    private void showAlertWithHeaderText() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("GAME INFO");
-        alert.setHeaderText("Results:");
-        alert.setContentText("YOU LOST!");
-
-        alert.showAndWait();
     }
 
 
@@ -189,23 +141,16 @@ public class Main extends Application {
             map.getGhost().move(0, -1);
         } else if (upDist < 0 && upDist < leftDist) {
             map.getGhost().move(0, 1);
-        } else if (leftDist > 0 && leftDist >= upDist) {
+        } else if (leftDist > 0) {
             map.getGhost().move(-1, 0);
         } else {
             map.getGhost().move(1, 0);
         }}
-//    public void sound() throws MalformedURLException {
-////        File mediaFile = new File("//home/ioana/Downloads/videoplayback.mp3");
-//        File mediaFile = new File("src/main/resources/videoplayback.mp3");
-//        Media media = new Media(mediaFile.toURI().toURL().toString());
-////        Media media = new Media(getClass().getResource("/videoplayback.mp3").toExternalForm());
-//        MediaPlayer mediaPlayer = new MediaPlayer(media);
-//        mediaPlayer.play();
-//    }
 
+
+    //TODO: loop for never-ending music
         public void sound () throws MalformedURLException {
             File mediaFile = new File("src/main/resources/videoplayback.mp3");
-            System.out.println(mediaFile.getAbsolutePath());
             Media media = new Media(mediaFile.toURI().toURL().toString());
             MediaPlayer mediaPlayer = new MediaPlayer(media);
             mediaPlayer.play();
@@ -248,10 +193,12 @@ public class Main extends Application {
                     break;
             }
             if (map.getActualMap() == 1 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
+                map.getPlayer().openDoor();
                 map = MapLoader.loadMap("/map2.txt");
                 map.setActualMap(2);
             }
             if (map.getActualMap() == 2 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
+                map.getPlayer().openDoor();
                 map = MapLoader.loadMap("/map3.txt");
                 map.setActualMap(3);
             }
@@ -267,10 +214,9 @@ public class Main extends Application {
             }
         }
         public void moveTroughWalls(int dx,int dy){
-if(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--")){
-    map.getPlayer().moveWally(dx,dy);
-}
-
+            if(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--")){
+                map.getPlayer().moveWally(dx,dy);
+            }
         }
 
         public void hasWon(){
@@ -278,7 +224,6 @@ if(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equ
             alert.setTitle("GAME INFO");
             alert.setHeaderText("Results:");
             alert.setContentText("YOU WON! Congrats");
-
             alert.showAndWait();
         }
 
@@ -297,9 +242,8 @@ if(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equ
 
     private void refresh() {
         context.setFill(Color.BLACK);
-        int screenX = map.getPlayer().getX() / 2 - 1;
-        int screenY = map.getPlayer().getY() / 2 - 1;
-
+        int screenX = (int) (map.getPlayer().getX() / 2 - 0.5);
+        int screenY = (int) (map.getPlayer().getY() / 2 - 0.5);
         context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         for (int x = 0; x < map.getWidth(); x++) {
@@ -320,7 +264,6 @@ if(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equ
         }
         healthLabel.setText("" + map.getPlayer().getHealth());
         strengthLabel.setText("" + map.getPlayer().getStrength());
-        shieldLabel.setText("" + map.getPlayer().getSheild());
         keyLabel.setText("" + map.getPlayer().isHasKey());
 
     }

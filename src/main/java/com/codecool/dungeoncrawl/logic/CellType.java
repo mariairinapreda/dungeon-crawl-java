@@ -8,9 +8,11 @@ public enum CellType {
     SHIELD("shield"),
     HEALTH("health"),
     KEY("key"),
-    MONSTER("monster"),
     DOOR("door"),
     OCEAN("ocean"),
+    MONSTER("monster"),
+    GHOST("ghost"),
+    SKELETON("skeleton"),
     TELEPORT("teleport");
 
 
