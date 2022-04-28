@@ -35,6 +35,9 @@ public class Tiles {
         tileMap.put("monster", new Tile(29,2));
         tileMap.put("ghost", new Tile(22,23));
         tileMap.put("teleport", new Tile(30,28));
+        tileMap.put("door", new Tile(29,3));
+        tileMap.put("openDoor", new Tile(4, 30));
+        tileMap.put("ocean", new Tile(8, 5));
     }
 
     public static void drawTile(GraphicsContext context, Drawable d, int x, int y) {

@@ -9,8 +9,8 @@ import java.io.InputStream;
 import java.util.Scanner;
 
 public class MapLoader {
-    public static GameMap loadMap() {
-        InputStream is = MapLoader.class.getResourceAsStream("/map.txt");
+    public static GameMap loadMap(String name) {
+        InputStream is = MapLoader.class.getResourceAsStream(name);
         Scanner scanner = new Scanner(is);
         int width = scanner.nextInt();
         int height = scanner.nextInt();
@@ -40,6 +40,9 @@ public class MapLoader {
                             cell.setType(CellType.TELEPORT);
                             map.setTeleport(new Teleport());
                             break;
+                        case 'P':
+                                cell.setType(CellType.OCEAN);
+                            break;
                         case 'E':
                             cell.setType(CellType.FLOOR);
                             map.setMonster(new Monster(cell));
@@ -47,6 +50,9 @@ public class MapLoader {
                         case 'G':
                             cell.setType(CellType.FLOOR);
                             map.setGhost(new Ghost(cell));
+                            cell.setType(CellType.MONSTER);
+                            map.setMonster(new Monster(cell));
+                            new Monster(cell);
                             break;
                         case 'O':
                             cell.setType(CellType.HEALTH);
@@ -56,6 +62,9 @@ public class MapLoader {
                             break;
                         case '.':
                             cell.setType(CellType.FLOOR);
+                            break;
+                        case 'D':
+                            cell.setType(CellType.DOOR);
                             break;
                         case 's':
                             cell.setType(CellType.FLOOR);

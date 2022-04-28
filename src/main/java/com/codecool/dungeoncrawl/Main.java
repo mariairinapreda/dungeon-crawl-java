@@ -3,6 +3,7 @@ package com.codecool.dungeoncrawl;
 import com.codecool.dungeoncrawl.logic.*;
 
 import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.codecool.dungeoncrawl.logic.actors.Skeleton;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -18,12 +19,23 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 
+import javax.sound.sampled.AudioInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Objects;
+import java.util.Scanner;
 
 
 public class Main extends Application {
-    GameMap map = MapLoader.loadMap();
+    GameMap map = MapLoader.loadMap("/map.txt");
     Canvas canvas = new Canvas(
             map.getWidth() * Tiles.TILE_WIDTH,
             map.getHeight() * Tiles.TILE_WIDTH);
@@ -55,6 +67,7 @@ public class Main extends Application {
         ui.add(new Label("Key: "), 0, 8);
         ui.add(keyLabel, 1, 8);
         ui.add(button, 0,9);
+        sound();
         button.setFocusTraversable(false);
         button.setOnAction(actionEvent -> {
             System.out.println("merge butonul");
@@ -96,10 +109,12 @@ public class Main extends Application {
         borderPane.setCenter(canvas);
         borderPane.setRight(ui);
 
+
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
+
 
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
@@ -115,91 +130,124 @@ public class Main extends Application {
 
 
     public void moveToward() {
-        int  leftDist = map.getGhost().getX() - map.getPlayer().getX();
+        int leftDist = map.getGhost().getX() - map.getPlayer().getX();
         int upDist = map.getGhost().getY() - map.getPlayer().getY();
         if (upDist == 0 && leftDist == 0) {
             return;
-        } if (upDist > 0 && upDist >= leftDist) {
-            map.getGhost().move(0,-1);
+        }
+        if (upDist > 0 && upDist >= leftDist) {
+            map.getGhost().move(0, -1);
         } else if (upDist < 0 && upDist < leftDist) {
-            map.getGhost().move(0,1);
+            map.getGhost().move(0, 1);
         } else if (leftDist > 0 && leftDist >= upDist) {
-            map.getGhost().move(-1,0);
+            map.getGhost().move(-1, 0);
         } else {
-            map.getGhost().move(1,0);
+            map.getGhost().move(1, 0);
+        }}
+//    public void sound() throws MalformedURLException {
+////        File mediaFile = new File("//home/ioana/Downloads/videoplayback.mp3");
+//        File mediaFile = new File("src/main/resources/videoplayback.mp3");
+//        Media media = new Media(mediaFile.toURI().toURL().toString());
+////        Media media = new Media(getClass().getResource("/videoplayback.mp3").toExternalForm());
+//        MediaPlayer mediaPlayer = new MediaPlayer(media);
+//        mediaPlayer.play();
+//    }
+
+        public void sound () throws MalformedURLException {
+            File mediaFile = new File("src/main/resources/videoplayback.mp3");
+            System.out.println(mediaFile.getAbsolutePath());
+            Media media = new Media(mediaFile.toURI().toURL().toString());
+            MediaPlayer mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.play();
         }
 
+        private void onKeyPressed (KeyEvent keyEvent){
 
-    }
-    private void onKeyPressed(KeyEvent keyEvent) {
-
-        switch (keyEvent.getCode()) {
-            case UP:
-                if(canTeleport()!=null){map.getPlayer().move(canTeleport().getX()+1,canTeleport().getY()+1);}
-               else{
-                map.getPlayer().move(0, -1);}
-                moveToward();
-                map.getMonster().move(0,-1);
-                refresh();
-                break;
-            case DOWN:
-                if(canTeleport()!=null){map.getPlayer().move(canTeleport().getX()+1,canTeleport().getY()+1);}
-else{
-                map.getPlayer().move(0, 1);}
-                moveToward();
-                map.getMonster().move(0, 1);
-                refresh();
-                break;
-            case LEFT:
-                if(canTeleport()!=null){map.getPlayer().move(canTeleport().getX()+1,canTeleport().getY()+1);}
-                else{
-                map.getPlayer().move(-1, 0);}
-                moveToward();
-                map.getMonster().move(-1, 0);
-                refresh();
-                break;
-            case RIGHT:
-                if(canTeleport()!=null){map.getPlayer().move(canTeleport().getX()+1,canTeleport().getY()+1);}
-                else{
-                map.getPlayer().move(1,0);}
-                moveToward();
-                map.getMonster().move(1,0);
-                refresh();
-                break;
-        }
-    }
-
-    private void refresh() {
-        context.setFill(Color.BLACK);
-        context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        for (int x = 0; x < map.getWidth(); x++) {
-            for (int y = 0; y < map.getHeight(); y++) {
-                Cell cell = map.getCell(x, y);
-                if (cell.getActor() != null) {
-                    Tiles.drawTile(context, cell.getActor(), x, y);
-                } else {
-                    Tiles.drawTile(context, cell, x, y);
-                }
+            switch (keyEvent.getCode()) {
+                case UP:
+                    if (canTeleport() != null) {
+                        map.getPlayer().moveToLocation(canTeleport());
+                    } else {
+                        map.getPlayer().move(0, -1);
+                    }
+                    moveToward();
+                    map.getMonster().move(0, -1);
+                    refresh();
+                    break;
+                case DOWN:
+                    if (canTeleport() != null) {
+                        map.getPlayer().moveToLocation(canTeleport());
+                    } else {
+                        map.getPlayer().move(0, 1);
+                    }
+                    moveToward();
+                    map.getMonster().move(0, 1);
+                    refresh();
+                    break;
+                case LEFT:
+                    if (canTeleport() != null) {
+                        map.getPlayer().moveToLocation(canTeleport());
+                    } else {
+                        map.getPlayer().move(-1, 0);
+                    }
+                    moveToward();
+                    map.getMonster().move(-1, 0);
+                    refresh();
+                    break;
+                case RIGHT:
+                    if (canTeleport() != null) {
+                        map.getPlayer().moveToLocation(canTeleport());
+                    } else {
+                        map.getPlayer().move(1, 0);
+                    }
+                    moveToward();
+                    map.getMonster().move(1, 0);
+                    refresh();
+                    break;
+            }
+            if (map.getActualMap() == 1 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
+                map = MapLoader.loadMap("/map2.txt");
+                map.setActualMap(2);
+            }
+            if (map.getActualMap() == 2 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
+                map = MapLoader.loadMap("/map3.txt");
+                map.setActualMap(3);
             }
         }
-        if(map.getPlayer().isDead()){
-            showAlertWithHeaderText();
+
+        private void refresh () {
+            context.setFill(Color.BLACK);
+            context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            for (int x = 0; x < map.getWidth(); x++) {
+                for (int y = 0; y < map.getHeight(); y++) {
+                    Cell cell = map.getCell(x, y);
+                    if (cell.getActor() != null) {
+                        Tiles.drawTile(context, cell.getActor(), x, y);
+                    } else {
+                        Tiles.drawTile(context, cell, x, y);
+                    }
+                }
+            }
+            if (map.getPlayer().isDead()) {
+                showAlertWithHeaderText();
+            }
+            healthLabel.setText("" + map.getPlayer().getHealth());
+            strengthLabel.setText("" + map.getPlayer().getStrength());
+            shieldLabel.setText("" + map.getPlayer().getSheild());
+            keyLabel.setText("" + map.getPlayer().isHasKey());
+
+
         }
-        healthLabel.setText("" + map.getPlayer().getHealth());
-        strengthLabel.setText("" + map.getPlayer().getStrength());
-        shieldLabel.setText("" + map.getPlayer().getSheild());
-        keyLabel.setText("" + map.getPlayer().isHasKey());
+
+
+        public Cell canTeleport () {
+            Teleport teleport = map.getTeleport();
+            Teleport teleport2 = map.getTeleport();
+            if (map.getPlayer().getCell().getNeighbor(map.getPlayer().getX(), map.getPlayer().getY()) == map.getCell(teleport.getCellforT().getX(), teleport.getCellforT().getY()))
+                return teleport.getCellforT();
+            else if (map.getPlayer().getCell().getNeighbor(map.getPlayer().getX(), map.getPlayer().getY()) == map.getCell(teleport2.getCellforT().getX(), teleport2.getCellforT().getY()))
+                return teleport2.getCellforT();
+            else return null;
+        }
+
     }
-
-
-    public Cell canTeleport(){
-        Teleport teleport=map.getTeleport();
-        Teleport teleport2=map.getTeleport();
-        if(map.getPlayer().getCell().getNeighbor(map.getPlayer().getX(),map.getPlayer().getY())==map.getCell(teleport.getCellforT().getX(),teleport.getCellforT().getY()))
-        return teleport.getCellforT();
-         else  if(map.getPlayer().getCell().getNeighbor(map.getPlayer().getX(),map.getPlayer().getY())==map.getCell(teleport2.getCellforT().getX(),teleport2.getCellforT().getY()))
-        return teleport2.getCellforT();
-    else return null;
-    }
-
-}

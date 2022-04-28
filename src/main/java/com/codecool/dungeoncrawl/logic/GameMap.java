@@ -2,11 +2,15 @@ package com.codecool.dungeoncrawl.logic;
 
 import com.codecool.dungeoncrawl.logic.actors.Ghost;
 import com.codecool.dungeoncrawl.logic.actors.Monster;
+import com.codecool.dungeoncrawl.logic.actors.Monster;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 
 public class GameMap {
     private int width;
     private int height;
+
+
+    private int actualMap = 1;
     private Cell[][] cells;
 
     private Player player;
@@ -39,6 +43,7 @@ public class GameMap {
 
 
 
+
     public GameMap(int width, int height, CellType defaultCellType) {
         this.width = width;
         this.height = height;
@@ -48,6 +53,14 @@ public class GameMap {
                 cells[x][y] = new Cell(this, x, y, defaultCellType);
             }
         }
+    }
+
+    public int getActualMap() {
+        return actualMap;
+    }
+
+    public void setActualMap(int actualMap) {
+        this.actualMap = actualMap;
     }
 
     public Cell getCell(int x, int y) {
@@ -64,6 +77,8 @@ public class GameMap {
     public Monster getMonster(){
         return monster;
     }
+
+
 
     public int getWidth() {
         return width;

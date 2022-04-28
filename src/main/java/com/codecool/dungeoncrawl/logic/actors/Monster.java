@@ -6,6 +6,8 @@ import com.codecool.dungeoncrawl.logic.CellType;
 import java.util.Objects;
 
 
+
+
 public class Monster extends Actor{
 
     private int health=15;
@@ -59,10 +61,9 @@ public class Monster extends Actor{
         if(!Objects.equals(nextCell.getTileName(), "wall") &&
                 !Objects.equals(nextCell.getTileName(), "empty") &&
                 nextCell.getActor() == null ){
-
-            cell.setActor(null);
-            nextCell.setActor(this);
-            cell = nextCell;}
+        cell.setActor(null);
+        nextCell.setActor(this);
+        cell = nextCell;}
         else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "player")){
             attack(nextCell);
         }

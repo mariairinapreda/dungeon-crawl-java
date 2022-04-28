@@ -9,6 +9,8 @@ public enum CellType {
     HEALTH("health"),
     KEY("key"),
     MONSTER("monster"),
+    DOOR("door"),
+    OCEAN("ocean"),
     TELEPORT("teleport");
 
 
