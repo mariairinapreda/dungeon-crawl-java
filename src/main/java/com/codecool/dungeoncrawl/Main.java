@@ -19,10 +19,12 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Objects;
-import java.util.Random;
+
 
 
 public class Main extends Application {
@@ -60,6 +62,7 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
         GridPane ui = new GridPane();
         ui.setOnMousePressed(e -> ui.requestFocus());
         ui.setPrefWidth(200);
@@ -75,15 +78,20 @@ public class Main extends Application {
         ui.add(userTextField, 1, 12);
         ui.add(cheatCode,0,14);
         userTextField.requestFocus();
-
+        cheatCode.setFocusTraversable(false);
         cheatCode.setOnAction(actionEvent -> {
             setText(userTextField.getText());
             userTextField.setDisable(true);
+            try {
+                sound();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
         });
 
-        sound();
         button.setFocusTraversable(false);
         button.setOnAction(actionEvent -> {
+
             int x =map.getPlayer().getCell().getX();
             int y = map.getPlayer().getCell().getY();
             if(map.getPlayer().getCell() ==
@@ -153,7 +161,17 @@ public class Main extends Application {
             File mediaFile = new File("src/main/resources/videoplayback.mp3");
             Media media = new Media(mediaFile.toURI().toURL().toString());
             MediaPlayer mediaPlayer = new MediaPlayer(media);
+            mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(Duration.ZERO));
+            mediaPlayer.setStopTime(Duration.INDEFINITE);
+            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             mediaPlayer.play();
+//            mediaPlayer.cycleDurationProperty();
+//            if(!map.getPlayer().isDead()){
+//                mediaPlayer.play();
+//            }else{
+//                mediaPlayer.stop();
+//            }
+
         }
 
         private void onKeyPressed (KeyEvent keyEvent){
@@ -163,42 +181,49 @@ public class Main extends Application {
                      if(map.getActualMap()==1) moveNormal(0,-1);
                      else if(map.getActualMap()==3)moveTroughWalls(0,-1);
                      else map.getPlayer().move(0,-1);
-                    if(map.getGhost()!=null) moveToward();
-                    moveMonster();
+                    if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
+                    else map.setGhost(null);
+                    if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
+                    else map.setMonster(null);
                     refresh();
                     break;
                 case DOWN:
                     if(map.getActualMap()==1)moveNormal(0,1);
                     else if(map.getActualMap()==3)moveTroughWalls(0,1);
                     else map.getPlayer().move(0,1);
-                    if(map.getGhost()!=null) moveToward();
-                    moveMonster();
+                    if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
+                    else map.setGhost(null);
+                    if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
+                    if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
+                    else map.setMonster(null);
                     refresh();
                     break;
                 case LEFT:
                     if(map.getActualMap()==1)moveNormal(-1,0);
                    else  if(map.getActualMap()==3)moveTroughWalls(-1,0);
                     else map.getPlayer().move(-1,0);
-                    if(map.getGhost()!=null) moveToward();
-                   moveMonster();
+                    if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
+                    else map.setGhost(null);
+                    if(map.getMonster() != null && map.getMonster().getHealth()>0)map.getMonster().move();
+                    else map.setMonster(null);
                     refresh();
                     break;
                 case RIGHT:
                     if(map.getActualMap()==1)moveNormal(1,0);
                     else if(map.getActualMap()==3) moveTroughWalls(1,0);
                     else map.getPlayer().move(1,0);
-                    if(map.getGhost()!=null) moveToward();
-                    moveMonster();
+                    if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
+                    else map.setGhost(null);
+                    if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
+                    else map.setMonster(null);
                     refresh();
                     break;
             }
             if (map.getActualMap() == 1 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
-                map.getPlayer().openDoor();
                 map = MapLoader.loadMap("/map2.txt");
                 map.setActualMap(2);
             }
             if (map.getActualMap() == 2 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
-                map.getPlayer().openDoor();
                 map = MapLoader.loadMap("/map3.txt");
                 map.setActualMap(3);
             }
@@ -227,23 +252,15 @@ public class Main extends Application {
             alert.showAndWait();
         }
 
-        public void moveMonster(){
-            Random destination=new Random();
-            boolean move=false;
-            while(!move){
-                int rand_int1 = destination.nextInt(-3,3);
-                int rand_int2 = destination.nextInt(-3,3);
-                if(map.getMonster().canMove(rand_int1,rand_int2)){
-                    map.getMonster().move( rand_int1, rand_int2);
-                move=true;
-                }
-            }
-        }
+
 
     private void refresh() {
         context.setFill(Color.BLACK);
         int screenX = (int) (map.getPlayer().getX() / 2 - 0.5);
         int screenY = (int) (map.getPlayer().getY() / 2 - 0.5);
+        if(screenY >5){
+            screenY = screenY - (screenY-5);
+        }
         context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
         for (int x = 0; x < map.getWidth(); x++) {
@@ -277,9 +294,7 @@ public class Main extends Application {
         }
 
         public boolean isWinner(){
-        if(map.getMonster()==null && map.getGhost()==null && map.getActualMap()==3 && map.getSkeleton()==null)
-        return true;
-        else return false;
+            return map.getMonster() == null && map.getGhost() == null && map.getActualMap() == 3 && map.getSkeleton() == null;
         }
 
     }

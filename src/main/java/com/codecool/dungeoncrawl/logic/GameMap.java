@@ -19,6 +19,7 @@ public class GameMap {
     private Monster monster;
     private Teleport teleport;
     private Skeleton skeleton;
+    public Ghost ghost;
 
     public Skeleton getSkeleton() {
         return skeleton;
@@ -45,7 +46,7 @@ public class GameMap {
         this.ghost = ghost;
     }
 
-    private Ghost ghost;
+
 
     public void setMonster(Monster monster) {
         this.monster = monster;

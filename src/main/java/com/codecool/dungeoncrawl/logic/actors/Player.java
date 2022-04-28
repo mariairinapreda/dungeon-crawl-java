@@ -49,9 +49,7 @@ public class Player extends Actor {
         this.health = health;
     }
 
-    public void openDoor(){
-        cell.getDoor().setOpen();
-    }
+
 
     public boolean standingOnDoor(){
         return cell.getType() == CellType.DOOR;
@@ -102,7 +100,7 @@ public void moveWally(int dx, int dy) {
     private void attack(Cell nextCell) {
             if(nextCell.getActor().getHealth() > 5){
                 nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
-//                cell.getActor().setHealth(cell.getActor().getHealth()-nextCell.getActor().getStrength());
+                cell.getActor().setHealth(cell.getActor().getHealth()-nextCell.getActor().getStrength());
             }
             nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
             if(nextCell.getActor().getHealth() <= 0){
@@ -119,7 +117,7 @@ public void moveWally(int dx, int dy) {
 
 
     public boolean isDead(){
-        return health<0;
+        return health<=0;
     }
 
 }

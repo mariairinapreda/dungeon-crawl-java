@@ -4,14 +4,13 @@ import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.CellType;
 
 import java.util.Objects;
-
-
+import java.util.Random;
 
 
 public class Monster extends Actor {
 
-    private int health = 5;
-    private int strength = 2;
+    private int health = 15;
+    private int strength = 10;
 
     @Override
     public Cell getCell() {
@@ -49,6 +48,11 @@ public class Monster extends Actor {
     }
 
     @Override
+    void move(int dx, int dy) {
+
+    }
+
+    @Override
     public String getTileName() {
         return "monster";
     }
@@ -58,6 +62,12 @@ public class Monster extends Actor {
             Cell nextCell = cell.getNeighbor(dx, dy);
             if (!Objects.equals(nextCell.getTileName(), "wall") &&
                     !Objects.equals(nextCell.getTileName(), "empty") &&
+                    !Objects.equals(nextCell.getTileName(), "door") &&
+                    !Objects.equals(nextCell.getTileName(), "ocean") &&
+                    !Objects.equals(nextCell.getTileName(), "health") &&
+                    !Objects.equals(nextCell.getTileName(), "shield") &&
+                    !Objects.equals(nextCell.getTileName(), "mace") &&
+                    !Objects.equals(nextCell.getTileName(), "key") &&
                     nextCell.getActor() == null) {
                 return true;
             } else return false;
@@ -68,12 +78,22 @@ public class Monster extends Actor {
 
 
 
-    public void move(int dx, int dy) {
-            cell.setActor(null);
-            cell.getNeighbor(dx, dy).setActor(this);
-            cell = cell.getNeighbor(dx, dy);
-    }
+    public void move() {
 
+        Random destination = new Random();
+        boolean move = false;
+        while (!move) {
+            int rand_int1 = destination.nextInt(-3, 3);
+            int rand_int2 = destination.nextInt(-3, 3);
+            if (canMove(rand_int1, rand_int2)) {
+                move = true;
+                cell.setActor(null);
+                cell.setType(CellType.FLOOR);
+                cell.getNeighbor(rand_int1, rand_int2).setActor(this);
+                cell = cell.getNeighbor(rand_int1, rand_int2);
+            }
+        }
+    }
 
 }
 
