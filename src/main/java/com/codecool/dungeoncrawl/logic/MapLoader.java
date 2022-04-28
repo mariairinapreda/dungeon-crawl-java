@@ -11,15 +11,15 @@ public class MapLoader {
     public static GameMap loadMap(String name) {
         InputStream is = MapLoader.class.getResourceAsStream(name);
         Scanner scanner = new Scanner(is);
-        int width = scanner.nextInt();
-        int height = scanner.nextInt();
+        int worldX = scanner.nextInt();
+        int worldY = scanner.nextInt();
 
         scanner.nextLine(); // empty line
 
-        GameMap map = new GameMap(width, height, CellType.EMPTY);
-        for (int y = 0; y < height; y++) {
+        GameMap map = new GameMap(worldX, worldY, CellType.EMPTY);
+        for (int y = 0; y < worldY; y++) {
             String line = scanner.nextLine();
-            for (int x = 0; x < width; x++) {
+            for (int x = 0; x < worldX; x++) {
                 if (x < line.length()) {
                     Cell cell = map.getCell(x, y);
                     switch (line.charAt(x)) {

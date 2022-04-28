@@ -38,9 +38,9 @@ public class Tiles {
         tileMap.put("ocean", new Tile(8, 5));
     }
 
-    public static void drawTile(GraphicsContext context, Drawable d, int x, int y) {
+    public static void drawTile(GraphicsContext context, Drawable d, int screenX, int screenY) {
         Tile tile = tileMap.get(d.getTileName());
         context.drawImage(tileset, tile.x, tile.y, tile.w, tile.h,
-                x * TILE_WIDTH, y * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH);
+                screenX * TILE_WIDTH, screenY * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH);
     }
 }

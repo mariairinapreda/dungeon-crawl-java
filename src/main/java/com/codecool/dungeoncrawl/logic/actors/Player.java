@@ -80,9 +80,6 @@ public class Player extends Actor {
             else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "monster")){
                 attack(nextCell);
             }
-//            else if (isHasKey() && standingOnDoor()){
-//            openDoor();
-//        }
     }
 
     private void attack(Cell nextCell) {
