@@ -6,8 +6,8 @@ import com.codecool.dungeoncrawl.logic.CellType;
 import java.util.Objects;
 
 public class Ghost extends Actor{
-    private int health;
-    private int strength;
+    private int health=15;
+    private int strength=7;
 
     @Override
     public int getHealth() {
@@ -44,26 +44,24 @@ public class Ghost extends Actor{
     @Override
    public void move(int dx, int dy) {
         Cell nextCell = cell.getNeighbor(dx, dy);
-        cell.setActor(null);
-            nextCell.setActor(this);
-            cell = nextCell;
-        if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "player")){
-            attack(nextCell);
+        if(nextCell.getActor()!=null) {
+            if (nextCell.getActor().getTileName() != "player") {
+                cell.setActor(null);
+                nextCell.setActor(this);
+                cell = nextCell;
+            }
+            else  nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
+
+
         }
-    }
-
-
-    private void attack(Cell nextCell) {
-//        if(cell.getActor().getHealth()>=nextCell.getActor().getStrength()){
-        cell.getActor().setHealth(cell.getActor().getHealth()-nextCell.getActor().getStrength());
-        nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
-        if(nextCell.getActor().getHealth() == 0){
-            nextCell.setActor(null);
-            nextCell.setType(CellType.FLOOR);
+        else{
             cell.setActor(null);
             nextCell.setActor(this);
             cell = nextCell;
-//            }
         }
     }
-}
+
+
+
+    }
+

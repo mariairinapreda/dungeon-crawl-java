@@ -2,8 +2,7 @@ package com.codecool.dungeoncrawl;
 
 import com.codecool.dungeoncrawl.logic.*;
 
-import com.codecool.dungeoncrawl.logic.actors.Player;
-import com.codecool.dungeoncrawl.logic.actors.Skeleton;
+
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -11,27 +10,22 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
+
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
+
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
-import javax.sound.sampled.AudioInputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Objects;
-import java.util.Scanner;
+import java.util.Random;
 
 
 public class Main extends Application {
@@ -45,6 +39,18 @@ public class Main extends Application {
     Label shieldLabel = new Label();
     Label keyLabel = new Label();
     Button button=new Button("Accept");
+    Label userName = new Label("Cheat:");
+    TextField userTextField = new TextField();
+    Button cheatCode=new Button("OK");
+    private String text;
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
 
 
 
@@ -56,6 +62,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         GridPane ui = new GridPane();
+        ui.setOnMousePressed(e -> ui.requestFocus());
         ui.setPrefWidth(200);
         ui.setPadding(new Insets(10));
         ui.add(new Label("Health: "), 0, 0);
@@ -67,6 +74,19 @@ public class Main extends Application {
         ui.add(new Label("Key: "), 0, 8);
         ui.add(keyLabel, 1, 8);
         ui.add(button, 0,9);
+        ui.add(userName, 0, 12);
+        ui.add(userTextField, 1, 12);
+        ui.add(cheatCode,0,14);
+        userTextField.requestFocus();
+
+
+        cheatCode.setOnAction(actionEvent -> {
+            setText(userTextField.getText());
+            userTextField.setDisable(true);
+        });
+
+
+
         sound();
         button.setFocusTraversable(false);
         button.setOnAction(actionEvent -> {
@@ -112,6 +132,8 @@ public class Main extends Application {
 
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
+
+
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
 
@@ -165,51 +187,35 @@ public class Main extends Application {
 
             switch (keyEvent.getCode()) {
                 case UP:
-                    Cell cellTeleport=map.getPlayer().getCell().getNeighbor(0,-1 );
-                    if (canTeleport(cellTeleport) != null) {
-                        map.getPlayer().moveToLocation(canTeleport(cellTeleport));
-                    } else {
-                        map.getPlayer().move(0, -1);
-                    }
-                    if(map.getGhost()!=null)
-                    moveToward();
-                    map.getMonster().move(0, -1);
+                     if(map.getActualMap()==1) moveNormal(0,-1);
+                     else if(map.getActualMap()==3)moveTroughWalls(0,-1);
+                     else map.getPlayer().move(0,-1);
+                    if(map.getGhost()!=null) moveToward();
+                    moveMonster();
                     refresh();
                     break;
                 case DOWN:
-                    Cell cellTelepor=map.getPlayer().getCell().getNeighbor(0,1 );
-                    if (canTeleport(cellTelepor) != null) {
-                        map.getPlayer().moveToLocation(canTeleport(cellTelepor));
-                    } else {
-                        map.getPlayer().move(0, 1);
-                    }
-                    if(map.getGhost()!=null)
-                        moveToward();
-                    map.getMonster().move(0, 1);
+                    if(map.getActualMap()==1)moveNormal(0,1);
+                    else if(map.getActualMap()==3)moveTroughWalls(0,1);
+                    else map.getPlayer().move(0,1);
+                    if(map.getGhost()!=null) moveToward();
+                    moveMonster();
                     refresh();
                     break;
                 case LEFT:
-                    Cell cellTelepo=map.getPlayer().getCell().getNeighbor(-1,0 );
-                    if (canTeleport(cellTelepo) != null) {
-                        map.getPlayer().moveToLocation(canTeleport(cellTelepo));
-                    } else {
-                        map.getPlayer().move(-1, 0);
-                    }
-                    if(map.getGhost()!=null)
-                        moveToward();
-                    map.getMonster().move(-1, 0);
+                    if(map.getActualMap()==1)moveNormal(-1,0);
+                   else  if(map.getActualMap()==3)moveTroughWalls(-1,0);
+                    else map.getPlayer().move(-1,0);
+                    if(map.getGhost()!=null) moveToward();
+                   moveMonster();
                     refresh();
                     break;
                 case RIGHT:
-                    Cell cellTeleport2=map.getPlayer().getCell().getNeighbor(1,0 );
-                    if (canTeleport(cellTeleport2) != null) {
-                        map.getPlayer().moveToLocation(canTeleport(cellTeleport2));
-                    } else {
-                        map.getPlayer().move(1, 0);
-                    }
-                    if(map.getGhost()!=null)
-                        moveToward();
-                    map.getMonster().move(1, 0);
+                    if(map.getActualMap()==1)moveNormal(1,0);
+                    else if(map.getActualMap()==3) moveTroughWalls(1,0);
+                    else map.getPlayer().move(1,0);
+                    if(map.getGhost()!=null) moveToward();
+                    moveMonster();
                     refresh();
                     break;
             }
@@ -220,6 +226,44 @@ public class Main extends Application {
             if (map.getActualMap() == 2 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
                 map = MapLoader.loadMap("/map3.txt");
                 map.setActualMap(3);
+            }
+            if(isWinner())hasWon();
+        }
+
+        public void moveNormal(int dx,int dy){
+            Cell cellTeleport=map.getPlayer().getCell().getNeighbor(dx,dy );
+            if (canTeleport(cellTeleport) != null &&(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--"))) {
+                map.getPlayer().moveToLocation(canTeleport(cellTeleport));
+            } else {
+                map.getPlayer().move(dx, dy);
+            }
+        }
+        public void moveTroughWalls(int dx,int dy){
+if(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--")){
+    map.getPlayer().moveWally(dx,dy);
+}
+
+        }
+
+        public void hasWon(){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("GAME INFO");
+            alert.setHeaderText("Results:");
+            alert.setContentText("YOU WON! Congrats");
+
+            alert.showAndWait();
+        }
+
+        public void moveMonster(){
+            Random destination=new Random();
+            boolean move=false;
+            while(!move){
+                int rand_int1 = destination.nextInt(-3,3);
+                int rand_int2 = destination.nextInt(-3,3);
+                if(map.getMonster().canMove(rand_int1,rand_int2)){
+                    map.getMonster().move( rand_int1, rand_int2);
+                move=true;
+                }
             }
         }
 
@@ -254,6 +298,12 @@ public class Main extends Application {
             if (cellt == cellTeleport)
                 return toTeleport;
             else return null;
+        }
+
+        public boolean isWinner(){
+        if(map.getMonster()==null && map.getGhost()==null && map.getActualMap()==3 && map.getSkeleton()==null)
+        return true;
+        else return false;
         }
 
     }

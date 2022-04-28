@@ -95,6 +95,23 @@ public class Player extends Actor {
         newCell.setActor(this);
         cell = newCell;
     }
+public void moveWally(int dx, int dy) {
+    Cell nextCell = cell.getNeighbor(dx, dy);
+    if (!Objects.equals(nextCell.getTileName(), "empty") &&
+            nextCell.getActor() == null) {
+        cell.setActor(null);
+        nextCell.setActor(this);
+        cell = nextCell;}
+    else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "skeleton")){
+        attack(nextCell);
+    }
+    else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "monster")){
+        attack(nextCell);
+    }
+    else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "ghost")){
+        attack(nextCell);
+    }
+    }
 
 
     private void attack(Cell nextCell) {
@@ -108,7 +125,6 @@ public class Player extends Actor {
                 cell.setActor(null);
                 nextCell.setActor(this);
                 cell = nextCell;
-//            }
         }
     }
 

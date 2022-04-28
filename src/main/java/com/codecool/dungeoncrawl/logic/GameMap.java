@@ -1,9 +1,9 @@
 package com.codecool.dungeoncrawl.logic;
 
-import com.codecool.dungeoncrawl.logic.actors.Ghost;
+import com.codecool.dungeoncrawl.logic.actors.*;
 import com.codecool.dungeoncrawl.logic.actors.Monster;
-import com.codecool.dungeoncrawl.logic.actors.Monster;
-import com.codecool.dungeoncrawl.logic.actors.Player;
+
+import java.util.Objects;
 
 public class GameMap {
     private int width;
@@ -16,6 +16,17 @@ public class GameMap {
     private Player player;
     private Monster monster;
     private Teleport teleport;
+    private Skeleton skeleton;
+
+    public Skeleton getSkeleton() {
+        return skeleton;
+    }
+
+    public void setSkeleton(Skeleton skeleton) {
+        this.skeleton = skeleton;
+    }
+
+
 
 
     public Teleport getTeleport() {
@@ -23,7 +34,7 @@ public class GameMap {
     }
 
     public Cell getTeleportPrecise(int x,int y) {
-if(getCell(x,y).getTileName()=="teleport")
+if(Objects.equals(getCell(x, y).getTileName(), "teleport"))
         return getCell(x,y);
         else return null;
     }

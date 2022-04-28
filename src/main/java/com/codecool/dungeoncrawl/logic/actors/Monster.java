@@ -8,10 +8,10 @@ import java.util.Objects;
 
 
 
-public class Monster extends Actor{
+public class Monster extends Actor {
 
-    private int health=15;
-    private int strength=5;
+    private int health = 15;
+    private int strength = 5;
 
     @Override
     public Cell getCell() {
@@ -19,11 +19,10 @@ public class Monster extends Actor{
     }
 
 
-
-
     public void setCell(Cell cell) {
         this.cell = cell;
     }
+
     @Override
     public int getHealth() {
         return health;
@@ -31,7 +30,7 @@ public class Monster extends Actor{
 
     @Override
     public void setHealth(int health) {
-        this.health =health;
+        this.health = health;
 
     }
 
@@ -54,43 +53,30 @@ public class Monster extends Actor{
         return "monster";
     }
 
+    public boolean canMove(int dx, int dy) {
+        try{
+        Cell nextCell = cell.getNeighbor(dx, dy);
+        if (!Objects.equals(nextCell.getTileName(), "wall") &&
+                !Objects.equals(nextCell.getTileName(), "empty") &&
+                nextCell.getActor() == null) {
+            return true;
+        } else return false;
+    }catch (IndexOutOfBoundsException e){
+            return false;
+        }
+    }
+
 
 
     public void move(int dx, int dy) {
-        Cell nextCell = cell.getNeighbor(dx, dy);
-        if(!Objects.equals(nextCell.getTileName(), "wall") &&
-                !Objects.equals(nextCell.getTileName(), "empty") &&
-                nextCell.getActor() == null ){
         cell.setActor(null);
-        nextCell.setActor(this);
-        cell = nextCell;}
-        else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "player")){
-            attack(nextCell);
-        }
-       else{
-           move(-dx,-dy);
-        }
-
-    }
-    private void attack(Cell nextCell) {
-//        if(cell.getActor().getHealth()>=nextCell.getActor().getStrength()){
-        cell.getActor().setHealth(cell.getActor().getHealth()-nextCell.getActor().getStrength());
-        nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
-        if(nextCell.getActor().getHealth() == 0){
-            nextCell.setActor(null);
-            nextCell.setType(CellType.FLOOR);
-            cell.setActor(null);
-            nextCell.setActor(this);
-            cell = nextCell;
-//            }
-        }
-    }
-    public boolean isDead(){
-        if(health>0)return false;
-        else return true;
+        cell.getNeighbor(dx, dy).setActor(this);
+        cell = cell.getNeighbor(dx, dy);
     }
 
 
+}
 
-    }
+
+
 
