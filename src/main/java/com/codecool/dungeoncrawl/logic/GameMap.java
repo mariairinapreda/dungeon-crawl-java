@@ -6,8 +6,10 @@ import com.codecool.dungeoncrawl.logic.actors.Monster;
 import java.util.Objects;
 
 public class GameMap {
-    private int width;
-    private int height;
+    private int worldX;
+    private int worldY;
+
+
 
 
     private int actualMap = 1;
@@ -62,8 +64,9 @@ if(Objects.equals(getCell(x, y).getTileName(), "teleport"))
 
 
     public GameMap(int width, int height, CellType defaultCellType) {
-        this.width = width;
-        this.height = height;
+        this.worldX = width;
+        this.worldY = height;
+
         cells = new Cell[width][height];
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -98,10 +101,10 @@ if(Objects.equals(getCell(x, y).getTileName(), "teleport"))
 
 
     public int getWidth() {
-        return width;
+        return worldX;
     }
 
     public int getHeight() {
-        return height;
+        return worldY;
     }
 }
