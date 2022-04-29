@@ -19,24 +19,16 @@ public class GameMap {
     private Monster monster;
     private Teleport teleport;
     private Skeleton skeleton;
+    public Ghost ghost;
 
     public Skeleton getSkeleton() {
         return skeleton;
     }
 
-    public void setSkeleton(Skeleton skeleton) {
-        this.skeleton = skeleton;
-    }
 
-
-
-
-    public Teleport getTeleport() {
-        return teleport;
-    }
 
     public Cell getTeleportPrecise(int x,int y) {
-if(Objects.equals(getCell(x, y).getTileName(), "teleport"))
+        if(Objects.equals(getCell(x, y).getTileName(), "teleport"))
         return getCell(x,y);
         else return null;
     }
@@ -54,7 +46,7 @@ if(Objects.equals(getCell(x, y).getTileName(), "teleport"))
         this.ghost = ghost;
     }
 
-    private Ghost ghost;
+
 
     public void setMonster(Monster monster) {
         this.monster = monster;

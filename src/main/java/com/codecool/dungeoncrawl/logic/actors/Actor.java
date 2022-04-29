@@ -7,10 +7,7 @@ import java.util.Objects;
 
 public abstract class Actor implements Drawable {
     protected Cell cell;
-    private int shield;
     private int strength;
-
-
     private int health;
 
     public Actor(Cell cell) {
@@ -18,6 +15,7 @@ public abstract class Actor implements Drawable {
         this.cell.setActor(this);
 
     }
+
 
     abstract void move(int dx, int dy);
 
@@ -35,13 +33,7 @@ public abstract class Actor implements Drawable {
     public int getStrength() {
         return strength;
     }
-    public int getSheild() {
-        return shield;
-    }
 
-    public void setShield(int shield) {
-        this.shield = shield;
-    }
 
     public Cell getCell() {
         return cell;

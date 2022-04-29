@@ -49,9 +49,8 @@ public class Player extends Actor {
         this.health = health;
     }
 
-    public void openDoor(){
-        cell.getDoor().setOpen();
-    }
+
+
     public boolean standingOnDoor(){
         return cell.getType() == CellType.DOOR;
     }
@@ -61,32 +60,24 @@ public class Player extends Actor {
             if(!Objects.equals(nextCell.getTileName(), "wall") &&
                     !Objects.equals(nextCell.getTileName(), "empty") &&
                     nextCell.getActor() == null ){
-
-                if(Objects.equals(cell.getNeighbor(dx, dy).getTileName(), "shield")){
-                    System.out.println("here is the shield");
-                }
-                if(Objects.equals(cell.getNeighbor(dx, dy).getTileName(), "health")){
-                    System.out.println("here is the health potion");
-                }
-                if(Objects.equals(cell.getNeighbor(dx, dy).getTileName(), "")){
-                    System.out.println("here is the health potion");
-                }
                 cell.setActor(null);
                 nextCell.setActor(this);
                 cell = nextCell;}
-            else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "skeleton")){
-                attack(nextCell);
+            else {
+                movementConditions(nextCell);
             }
-            else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "monster")){
-                attack(nextCell);
-            }
-            else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "ghost")){
-                attack(nextCell);
-            }
+    }
 
-//            else if (isHasKey() && standingOnDoor()){
-//            openDoor();
-//        }
+    private void movementConditions(Cell nextCell) {
+        if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "skeleton")){
+            attack(nextCell);
+        }
+        else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "monster")){
+            attack(nextCell);
+        }
+        else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "ghost")){
+            attack(nextCell);
+        }
     }
 
     public void moveToLocation(Cell nextCell){
@@ -102,24 +93,17 @@ public void moveWally(int dx, int dy) {
         cell.setActor(null);
         nextCell.setActor(this);
         cell = nextCell;}
-    else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "skeleton")){
-        attack(nextCell);
-    }
-    else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "monster")){
-        attack(nextCell);
-    }
-    else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "ghost")){
-        attack(nextCell);
-    }
-    }
+    else movementConditions(nextCell);
+}
 
 
     private void attack(Cell nextCell) {
             if(nextCell.getActor().getHealth() > 5){
+                nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
                 cell.getActor().setHealth(cell.getActor().getHealth()-nextCell.getActor().getStrength());
             }
             nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
-            if(nextCell.getActor().getHealth() == 0){
+            if(nextCell.getActor().getHealth() <= 0){
                 nextCell.setActor(null);
                 nextCell.setType(CellType.FLOOR);
                 cell.setActor(null);
@@ -133,7 +117,7 @@ public void moveWally(int dx, int dy) {
 
 
     public boolean isDead(){
-        return health<0;
+        return health<=0;
     }
 
 }
