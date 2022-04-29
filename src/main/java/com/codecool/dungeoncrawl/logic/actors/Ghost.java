@@ -6,8 +6,8 @@ import com.codecool.dungeoncrawl.logic.CellType;
 import java.util.Objects;
 
 public class Ghost extends Actor{
-    private int health=15;
-    private int strength=7;
+    private int health=7;
+    private int strength=2;
 
     @Override
     public int getHealth() {
@@ -44,21 +44,13 @@ public class Ghost extends Actor{
     @Override
    public void move(int dx, int dy) {
         Cell nextCell = cell.getNeighbor(dx, dy);
-        if(nextCell.getActor()!=null) {
-            if (nextCell.getActor().getTileName() != "player") {
-                cell.setActor(null);
-                nextCell.setActor(this);
-                cell = nextCell;
-            }
-            else  nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
-
-
-        }
-        else{
+        if (nextCell.getActor() == null) {
             cell.setActor(null);
             nextCell.setActor(this);
             cell = nextCell;
         }
+
+
     }
 
 
