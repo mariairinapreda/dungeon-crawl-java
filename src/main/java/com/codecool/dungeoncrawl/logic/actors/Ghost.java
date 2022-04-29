@@ -7,7 +7,7 @@ import java.util.Objects;
 
 public class Ghost extends Actor{
     private int health=15;
-    private int strength=7;
+    private int strength=5;
 
     @Override
     public int getHealth() {

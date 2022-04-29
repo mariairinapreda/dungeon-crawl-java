@@ -48,6 +48,7 @@ public class Main extends Application {
     Label userName = new Label("Cheat:");
     TextField userTextField = new TextField();
     Button cheatCode=new Button("OK");
+    MediaPlayer mediaPlayer;
     private String text;
 
 
@@ -63,6 +64,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
+        sound();
         GridPane ui = new GridPane();
         ui.setOnMousePressed(e -> ui.requestFocus());
         ui.setPrefWidth(200);
@@ -82,11 +84,6 @@ public class Main extends Application {
         cheatCode.setOnAction(actionEvent -> {
             setText(userTextField.getText());
             userTextField.setDisable(true);
-            try {
-                sound();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
         });
 
         button.setFocusTraversable(false);
@@ -157,13 +154,19 @@ public class Main extends Application {
 
 
     //TODO: loop for never-ending music
-        public void sound () throws MalformedURLException {
-            File mediaFile = new File("src/main/resources/videoplayback.mp3");
-            Media media = new Media(mediaFile.toURI().toURL().toString());
-            MediaPlayer mediaPlayer = new MediaPlayer(media);
-            mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(Duration.ZERO));
-            mediaPlayer.setStopTime(Duration.INDEFINITE);
-            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        public void sound ()  {
+            File mediaFile = new File("src/main/resources/music.mp3");
+            Media media = null;
+            try {
+                media = new Media(mediaFile.toURI().toURL().toString());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            assert media != null;
+            mediaPlayer = new MediaPlayer(media);
+//            mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(Duration.ZERO));
+//            mediaPlayer.setStopTime(Duration.INDEFINITE);
+//            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             mediaPlayer.play();
 //            mediaPlayer.cycleDurationProperty();
 //            if(!map.getPlayer().isDead()){
@@ -186,6 +189,9 @@ public class Main extends Application {
                     if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
                     else map.setMonster(null);
                     refresh();
+                    if (mediaPlayer.isMute()) {
+                        sound();
+                    }
                     break;
                 case DOWN:
                     if(map.getActualMap()==1)moveNormal(0,1);
@@ -277,14 +283,20 @@ public class Main extends Application {
         }
         if (map.getPlayer().isDead()) {
             System.out.println("you lost");
-            System.exit(0);
+            hasLost();
         }
         healthLabel.setText("" + map.getPlayer().getHealth());
         strengthLabel.setText("" + map.getPlayer().getStrength());
         keyLabel.setText("" + map.getPlayer().isHasKey());
 
     }
-
+    public void hasLost(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("GAME INFO");
+        alert.setHeaderText("Results:");
+        alert.setContentText("YOU LOST! Congrats");
+        alert.showAndWait();
+    }
         public Cell canTeleport (Cell cellt) {
             Cell cellTeleport=map.getTeleportPrecise(3,18);
             Cell toTeleport=map.getTeleportPrecise(18,17);
