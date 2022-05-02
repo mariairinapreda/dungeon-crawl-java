@@ -67,6 +67,7 @@ public class Monster extends Actor {
                     !Objects.equals(nextCell.getTileName(), "health") &&
                     !Objects.equals(nextCell.getTileName(), "shield") &&
                     !Objects.equals(nextCell.getTileName(), "mace") &&
+                    !Objects.equals(nextCell.getTileName(), "teleport") &&
                     !Objects.equals(nextCell.getTileName(), "key") &&
                     nextCell.getActor() == null) {
                 return true;

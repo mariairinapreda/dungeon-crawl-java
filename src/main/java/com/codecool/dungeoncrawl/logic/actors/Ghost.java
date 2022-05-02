@@ -6,8 +6,8 @@ import com.codecool.dungeoncrawl.logic.CellType;
 import java.util.Objects;
 
 public class Ghost extends Actor{
-    private int health=7;
-    private int strength=2;
+    private int health=15;
+    private int strength=5;
 
     @Override
     public int getHealth() {
