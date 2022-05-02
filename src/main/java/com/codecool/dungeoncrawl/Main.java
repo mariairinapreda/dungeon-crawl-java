@@ -242,6 +242,9 @@ public class Main extends Application {
             if(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--")){
                 map.getPlayer().moveWally(dx,dy);
             }
+            else{
+                map.getPlayer().move(dx, dy);
+            }
         }
 
         public void hasWon(){
@@ -252,7 +255,13 @@ public class Main extends Application {
             alert.showAndWait();
         }
 
-
+public void hasLost(){
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle("GAME INFO");
+    alert.setHeaderText("Results:");
+    alert.setContentText("YOU LOST! Congrats");
+    alert.showAndWait();
+}
 
     private void refresh() {
         context.setFill(Color.BLACK);
@@ -276,8 +285,8 @@ public class Main extends Application {
             }
         }
         if (map.getPlayer().isDead()) {
-            System.out.println("you lost");
-            System.exit(0);
+            hasLost();
+
         }
         healthLabel.setText("" + map.getPlayer().getHealth());
         strengthLabel.setText("" + map.getPlayer().getStrength());
