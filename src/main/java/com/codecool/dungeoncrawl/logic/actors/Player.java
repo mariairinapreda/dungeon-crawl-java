@@ -120,4 +120,7 @@ public void moveWally(int dx, int dy) {
         return health<=0;
     }
 
+    public String getName() {
+        return "";
+    }
 }
