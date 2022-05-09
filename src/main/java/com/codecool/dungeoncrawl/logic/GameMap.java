@@ -1,130 +1,46 @@
-package com.codecool.dungeoncrawl.logic;
+package com.codecool.dungeoncrawl.logic.actors;
 
-<<<<<<< HEAD
-import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.codecool.dungeoncrawl.logic.Cell;
 
-public class GameMap {
-    private int width;
-    private int height;
-    private Cell[][] cells;
-
-    private Player player;
-
-    public GameMap(int width, int height, CellType defaultCellType) {
-        this.width = width;
-        this.height = height;
-=======
-import com.codecool.dungeoncrawl.logic.actors.*;
-import com.codecool.dungeoncrawl.logic.actors.Monster;
-
-import java.util.Objects;
-
-public class GameMap {
-    private int worldX;
-    private int worldY;
+public class Skeleton extends Actor {
+    private int health=10;
+    private int strength=2;
 
 
+    @Override
+    public int getHealth() {
+        return health;
+    }
 
+    @Override
+    public void setHealth(int health) {
+        this.health = health;
+    }
 
-    private int actualMap = 1;
-    private Cell[][] cells;
+    @Override
+    public int getStrength() {
+        return strength;
+    }
 
-    private Player player;
-    private Monster monster;
-    private Teleport teleport;
-    private Skeleton skeleton;
-    public Ghost ghost;
-
-    public Skeleton getSkeleton() {
-        return skeleton;
+    @Override
+    public void setStrength(int strength) {
+        this.strength = strength;
     }
 
 
-
-    public Cell getTeleportPrecise(int x,int y) {
-        if(Objects.equals(getCell(x, y).getTileName(), "teleport"))
-        return getCell(x,y);
-        else return null;
+    public Skeleton(Cell cell) {
+        super(cell);
     }
 
-    public void setTeleport(Teleport teleport) {
-        this.teleport = teleport;
+    @Override
+    public void move(int dx, int dy) {
+
     }
 
-
-    public Ghost getGhost() {
-        return ghost;
-    }
-
-    public void setGhost(Ghost ghost) {
-        this.ghost = ghost;
+    @Override
+    public String getTileName() {
+        return "skeleton";
     }
 
 
-
-    public void setMonster(Monster monster) {
-        this.monster = monster;
-    }
-
-
-
-
-    public GameMap(int width, int height, CellType defaultCellType) {
-        this.worldX = width;
-        this.worldY = height;
-
->>>>>>> repo-old/development
-        cells = new Cell[width][height];
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                cells[x][y] = new Cell(this, x, y, defaultCellType);
-            }
-        }
-    }
-
-<<<<<<< HEAD
-=======
-    public int getActualMap() {
-        return actualMap;
-    }
-
-    public void setActualMap(int actualMap) {
-        this.actualMap = actualMap;
-    }
-
->>>>>>> repo-old/development
-    public Cell getCell(int x, int y) {
-        return cells[x][y];
-    }
-
-    public void setPlayer(Player player) {
-        this.player = player;
-    }
-
-    public Player getPlayer() {
-        return player;
-    }
-<<<<<<< HEAD
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-=======
-    public Monster getMonster(){
-        return monster;
-    }
-
-
-
-    public int getWidth() {
-        return worldX;
-    }
-
-    public int getHeight() {
-        return worldY;
->>>>>>> repo-old/development
-    }
 }
