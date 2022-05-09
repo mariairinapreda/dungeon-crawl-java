@@ -155,20 +155,20 @@ public class Main extends Application {
 
 
     //TODO: loop for never-ending music
-    public void sound ()  {
-        File mediaFile = new File("src/main/resources/music.mp3");
-        Media media = null;
-        try {
-            media = new Media(mediaFile.toURI().toURL().toString());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        assert media != null;
-        mediaPlayer = new MediaPlayer(media);
+        public void sound ()  {
+            File mediaFile = new File("src/main/resources/music.mp3");
+            Media media = null;
+            try {
+                media = new Media(mediaFile.toURI().toURL().toString());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            assert media != null;
+            mediaPlayer = new MediaPlayer(media);
 //            mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(Duration.ZERO));
 //            mediaPlayer.setStopTime(Duration.INDEFINITE);
 //            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        mediaPlayer.play();
+            mediaPlayer.play();
 //            mediaPlayer.cycleDurationProperty();
 //            if(!map.getPlayer().isDead()){
 //                mediaPlayer.play();
@@ -176,88 +176,88 @@ public class Main extends Application {
 //                mediaPlayer.stop();
 //            }
 
-    }
+        }
 
-    private void onKeyPressed (KeyEvent keyEvent){
+        private void onKeyPressed (KeyEvent keyEvent){
 
-        switch (keyEvent.getCode()) {
-            case UP:
-                if(map.getActualMap()==1) moveNormal(0,-1);
-                else if(map.getActualMap()==3)moveTroughWalls(0,-1);
-                else map.getPlayer().move(0,-1);
-                if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
-                else map.setGhost(null);
-                if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
-                else map.setMonster(null);
-                refresh();
-                if (mediaPlayer.isMute()) {
-                    sound();
-                }
-                break;
-            case DOWN:
-                if(map.getActualMap()==1)moveNormal(0,1);
-                else if(map.getActualMap()==3)moveTroughWalls(0,1);
-                else map.getPlayer().move(0,1);
-                if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
-                else map.setGhost(null);
-                if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
-                if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
-                else map.setMonster(null);
-                refresh();
-                break;
-            case LEFT:
-                if(map.getActualMap()==1)moveNormal(-1,0);
-                else  if(map.getActualMap()==3)moveTroughWalls(-1,0);
-                else map.getPlayer().move(-1,0);
-                if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
-                else map.setGhost(null);
-                if(map.getMonster() != null && map.getMonster().getHealth()>0)map.getMonster().move();
-                else map.setMonster(null);
-                refresh();
-                break;
-            case RIGHT:
-                if(map.getActualMap()==1)moveNormal(1,0);
-                else if(map.getActualMap()==3) moveTroughWalls(1,0);
-                else map.getPlayer().move(1,0);
-                if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
-                else map.setGhost(null);
-                if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
-                else map.setMonster(null);
-                refresh();
-                break;
+            switch (keyEvent.getCode()) {
+                case UP:
+                     if(map.getActualMap()==1) moveNormal(0,-1);
+                     else if(map.getActualMap()==3)moveTroughWalls(0,-1);
+                     else map.getPlayer().move(0,-1);
+                    if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
+                    else map.setGhost(null);
+                    if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
+                    else map.setMonster(null);
+                    refresh();
+                    if (mediaPlayer.isMute()) {
+                        sound();
+                    }
+                    break;
+                case DOWN:
+                    if(map.getActualMap()==1)moveNormal(0,1);
+                    else if(map.getActualMap()==3)moveTroughWalls(0,1);
+                    else map.getPlayer().move(0,1);
+                    if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
+                    else map.setGhost(null);
+                    if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
+                    if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
+                    else map.setMonster(null);
+                    refresh();
+                    break;
+                case LEFT:
+                    if(map.getActualMap()==1)moveNormal(-1,0);
+                   else  if(map.getActualMap()==3)moveTroughWalls(-1,0);
+                    else map.getPlayer().move(-1,0);
+                    if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
+                    else map.setGhost(null);
+                    if(map.getMonster() != null && map.getMonster().getHealth()>0)map.getMonster().move();
+                    else map.setMonster(null);
+                    refresh();
+                    break;
+                case RIGHT:
+                    if(map.getActualMap()==1)moveNormal(1,0);
+                    else if(map.getActualMap()==3) moveTroughWalls(1,0);
+                    else map.getPlayer().move(1,0);
+                    if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
+                    else map.setGhost(null);
+                    if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
+                    else map.setMonster(null);
+                    refresh();
+                    break;
+            }
+            if (map.getActualMap() == 1 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
+                map = MapLoader.loadMap("/map2.txt");
+                map.setActualMap(2);
+            }
+            if (map.getActualMap() == 2 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
+                map = MapLoader.loadMap("/map3.txt");
+                map.setActualMap(3);
+            }
+            if(isWinner())hasWon();
         }
-        if (map.getActualMap() == 1 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
-            map = MapLoader.loadMap("/map2.txt");
-            map.setActualMap(2);
-        }
-        if (map.getActualMap() == 2 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
-            map = MapLoader.loadMap("/map3.txt");
-            map.setActualMap(3);
-        }
-        if(isWinner())hasWon();
-    }
 
-    public void moveNormal(int dx,int dy){
-        Cell cellTeleport=map.getPlayer().getCell().getNeighbor(dx,dy );
-        if (canTeleport(cellTeleport) != null &&(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--"))) {
-            map.getPlayer().moveToLocation(canTeleport(cellTeleport));
-        } else {
-            map.getPlayer().move(dx, dy);
+        public void moveNormal(int dx,int dy){
+            Cell cellTeleport=map.getPlayer().getCell().getNeighbor(dx,dy );
+            if (canTeleport(cellTeleport) != null &&(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--"))) {
+                map.getPlayer().moveToLocation(canTeleport(cellTeleport));
+            } else {
+                map.getPlayer().move(dx, dy);
+            }
         }
-    }
-    public void moveTroughWalls(int dx,int dy){
-        if(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--")){
-            map.getPlayer().moveWally(dx,dy);
+        public void moveTroughWalls(int dx,int dy){
+            if(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--")){
+                map.getPlayer().moveWally(dx,dy);
+            }
         }
-    }
 
-    public void hasWon(){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("GAME INFO");
-        alert.setHeaderText("Results:");
-        alert.setContentText("YOU WON! Congrats");
-        alert.showAndWait();
-    }
+        public void hasWon(){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("GAME INFO");
+            alert.setHeaderText("Results:");
+            alert.setContentText("YOU WON! Congrats");
+            alert.showAndWait();
+        }
 
 
 
@@ -298,16 +298,16 @@ public class Main extends Application {
         alert.setContentText("YOU LOST! Congrats");
         alert.showAndWait();
     }
-    public Cell canTeleport (Cell cellt) {
-        Cell cellTeleport=map.getTeleportPrecise(3,18);
-        Cell toTeleport=map.getTeleportPrecise(18,17);
-        if (cellt == cellTeleport)
-            return toTeleport;
-        else return null;
-    }
+        public Cell canTeleport (Cell cellt) {
+            Cell cellTeleport=map.getTeleportPrecise(3,18);
+            Cell toTeleport=map.getTeleportPrecise(18,17);
+            if (cellt == cellTeleport)
+                return toTeleport;
+            else return null;
+        }
 
-    public boolean isWinner(){
-        return map.getMonster() == null && map.getGhost() == null && map.getActualMap() == 3 && map.getSkeleton() == null;
-    }
+        public boolean isWinner(){
+            return map.getMonster() == null && map.getGhost() == null && map.getActualMap() == 3 && map.getSkeleton() == null;
+        }
 
-}
+    }

@@ -18,7 +18,7 @@ public class Player extends Actor {
         super(cell);
     }
 
-
+    
     public String getTileName() {
         return "player";
     }
@@ -56,16 +56,16 @@ public class Player extends Actor {
     }
 
     public void move(int dx, int dy) {
-        Cell nextCell = cell.getNeighbor(dx, dy);
-        if(!Objects.equals(nextCell.getTileName(), "wall") &&
-                !Objects.equals(nextCell.getTileName(), "empty") &&
-                nextCell.getActor() == null ){
-            cell.setActor(null);
-            nextCell.setActor(this);
-            cell = nextCell;}
-        else {
-            movementConditions(nextCell);
-        }
+            Cell nextCell = cell.getNeighbor(dx, dy);
+            if(!Objects.equals(nextCell.getTileName(), "wall") &&
+                    !Objects.equals(nextCell.getTileName(), "empty") &&
+                    nextCell.getActor() == null ){
+                cell.setActor(null);
+                nextCell.setActor(this);
+                cell = nextCell;}
+            else {
+                movementConditions(nextCell);
+            }
     }
 
     private void movementConditions(Cell nextCell) {
@@ -86,29 +86,29 @@ public class Player extends Actor {
         newCell.setActor(this);
         cell = newCell;
     }
-    public void moveWally(int dx, int dy) {
-        Cell nextCell = cell.getNeighbor(dx, dy);
-        if (!Objects.equals(nextCell.getTileName(), "empty") &&
-                nextCell.getActor() == null) {
-            cell.setActor(null);
-            nextCell.setActor(this);
-            cell = nextCell;}
-        else movementConditions(nextCell);
-    }
+public void moveWally(int dx, int dy) {
+    Cell nextCell = cell.getNeighbor(dx, dy);
+    if (!Objects.equals(nextCell.getTileName(), "empty") &&
+            nextCell.getActor() == null) {
+        cell.setActor(null);
+        nextCell.setActor(this);
+        cell = nextCell;}
+    else movementConditions(nextCell);
+}
 
 
     private void attack(Cell nextCell) {
-        if(nextCell.getActor().getHealth() > 5){
+            if(nextCell.getActor().getHealth() > 5){
+                nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
+                cell.getActor().setHealth(cell.getActor().getHealth()-nextCell.getActor().getStrength());
+            }
             nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
-            cell.getActor().setHealth(cell.getActor().getHealth()-nextCell.getActor().getStrength());
-        }
-        nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
-        if(nextCell.getActor().getHealth() <= 0){
-            nextCell.setActor(null);
-            nextCell.setType(CellType.FLOOR);
-            cell.setActor(null);
-            nextCell.setActor(this);
-            cell = nextCell;
+            if(nextCell.getActor().getHealth() <= 0){
+                nextCell.setActor(null);
+                nextCell.setType(CellType.FLOOR);
+                cell.setActor(null);
+                nextCell.setActor(this);
+                cell = nextCell;
         }
     }
 

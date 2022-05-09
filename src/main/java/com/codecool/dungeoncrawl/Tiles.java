@@ -28,14 +28,6 @@ public class Tiles {
         tileMap.put("floor", new Tile(2, 0));
         tileMap.put("player", new Tile(27, 0));
         tileMap.put("skeleton", new Tile(29, 6));
-<<<<<<< HEAD
-    }
-
-    public static void drawTile(GraphicsContext context, Drawable d, int x, int y) {
-        Tile tile = tileMap.get(d.getTileName());
-        context.drawImage(tileset, tile.x, tile.y, tile.w, tile.h,
-                x * TILE_WIDTH, y * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH);
-=======
         tileMap.put("mace", new Tile(10, 30));
         tileMap.put("shield", new Tile(5, 25));
         tileMap.put("health", new Tile(18, 28));
@@ -52,6 +44,5 @@ public class Tiles {
         Tile tile = tileMap.get(d.getTileName());
         context.drawImage(tileset, tile.x, tile.y, tile.w, tile.h,
                 screenX * TILE_WIDTH, screenY * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH);
->>>>>>> repo-old/development
     }
 }
