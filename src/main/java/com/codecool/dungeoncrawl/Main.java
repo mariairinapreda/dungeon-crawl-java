@@ -1,35 +1,62 @@
 package com.codecool.dungeoncrawl;
 
-import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
-import com.codecool.dungeoncrawl.logic.Cell;
-import com.codecool.dungeoncrawl.logic.GameMap;
-import com.codecool.dungeoncrawl.logic.MapLoader;
-import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.codecool.dungeoncrawl.logic.*;
+
+
 import javafx.application.Application;
+
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.util.Duration;
 
-import java.sql.SQLException;
+import java.io.File;
+import java.net.MalformedURLException;
+import java.util.Objects;
+
+
 
 public class Main extends Application {
-    GameMap map = MapLoader.loadMap();
+
+    private final int mapSizeX = 15;
+    private final int mapSizeY = 15;
+    GameMap map = MapLoader.loadMap("/map.txt");
+//    Canvas canvas = new Canvas(
+//            map.getWidth() * Tiles.TILE_WIDTH,
+//            map.getHeight() * Tiles.TILE_WIDTH);
+
     Canvas canvas = new Canvas(
-            map.getWidth() * Tiles.TILE_WIDTH,
-            map.getHeight() * Tiles.TILE_WIDTH);
+            mapSizeX * Tiles.TILE_WIDTH,
+            mapSizeY * Tiles.TILE_WIDTH);
+
     GraphicsContext context = canvas.getGraphicsContext2D();
     Label healthLabel = new Label();
-    GameDatabaseManager dbManager;
+    Label strengthLabel = new Label();
+    Label keyLabel = new Label();
+    Button button=new Button("Accept");
+    Label userName = new Label("Cheat:");
+    TextField userTextField = new TextField();
+    Button cheatCode=new Button("OK");
+    MediaPlayer mediaPlayer;
+    private String text;
+
+
+
+    public void setText(String text) {
+        this.text = text;
+    }
 
     public static void main(String[] args) {
         launch(args);
@@ -37,95 +64,250 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        setupDbManager();
+
+        sound();
         GridPane ui = new GridPane();
+        ui.setOnMousePressed(e -> ui.requestFocus());
         ui.setPrefWidth(200);
         ui.setPadding(new Insets(10));
-
         ui.add(new Label("Health: "), 0, 0);
         ui.add(healthLabel, 1, 0);
+        ui.add(new Label("Strength: "), 0, 2);
+        ui.add(strengthLabel, 1, 2);
+        ui.add(new Label("Key: "), 0, 8);
+        ui.add(keyLabel, 1, 8);
+        ui.add(button, 0,9);
+        ui.add(userName, 0, 12);
+        ui.add(userTextField, 1, 12);
+        ui.add(cheatCode,0,14);
+        userTextField.requestFocus();
+        cheatCode.setFocusTraversable(false);
+        cheatCode.setOnAction(actionEvent -> {
+            setText(userTextField.getText());
+            userTextField.setDisable(true);
+        });
+
+        button.setFocusTraversable(false);
+        button.setOnAction(actionEvent -> {
+
+            int x =map.getPlayer().getCell().getX();
+            int y = map.getPlayer().getCell().getY();
+            if(map.getPlayer().getCell() ==
+                    ((Objects.equals(map.getCell(x, y).getTileName(), "key") ? map.getCell(x,y): ""))){
+                map.getCell(x, y).setType(CellType.FLOOR);
+                map.getPlayer().setHasKey(true);
+            }
+            if(map.getPlayer().getCell() ==
+                    ((Objects.equals(map.getCell(x, y).getTileName(), "shield") ? map.getCell(x,y): ""))){
+                map.getCell(x, y).setType(CellType.FLOOR);
+                int oneShield = 1;
+                map.getPlayer().setStrength(map.getPlayer().getStrength()+oneShield);
+            }
+            if(map.getPlayer().getCell() ==
+                    ((Objects.equals(map.getCell(x, y).getTileName(), "health") ? map.getCell(x,y): ""))){
+                map.getCell(x, y).setType(CellType.FLOOR);
+                int potion = 10;
+                map.getPlayer().setHealth(map.getPlayer().getHealth()+potion);
+            }
+            if(map.getPlayer().getCell() ==
+                    ((Objects.equals(map.getCell(x, y).getTileName(), "mace") ? map.getCell(x,y): ""))){
+                map.getCell(x, y).setType(CellType.FLOOR);
+                int mace = 1;
+                map.getPlayer().setStrength(map.getPlayer().getStrength()+mace);
+            }
+
+        });
+
 
         BorderPane borderPane = new BorderPane();
-
         borderPane.setCenter(canvas);
+
         borderPane.setRight(ui);
+
 
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
+
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
-        scene.setOnKeyReleased(this::onKeyReleased);
+
 
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
     }
 
-    private void onKeyReleased(KeyEvent keyEvent) {
-        KeyCombination exitCombinationMac = new KeyCodeCombination(KeyCode.W, KeyCombination.SHORTCUT_DOWN);
-        KeyCombination exitCombinationWin = new KeyCodeCombination(KeyCode.F4, KeyCombination.ALT_DOWN);
-        if (exitCombinationMac.match(keyEvent)
-                || exitCombinationWin.match(keyEvent)
-                || keyEvent.getCode() == KeyCode.ESCAPE) {
-            exit();
-        }
-    }
 
-    private void onKeyPressed(KeyEvent keyEvent) {
-        switch (keyEvent.getCode()) {
-            case UP:
-                map.getPlayer().move(0, -1);
-                refresh();
-                break;
-            case DOWN:
-                map.getPlayer().move(0, 1);
-                refresh();
-                break;
-            case LEFT:
-                map.getPlayer().move(-1, 0);
-                refresh();
-                break;
-            case RIGHT:
-                map.getPlayer().move(1, 0);
-                refresh();
-                break;
-            case S:
-                Player player = map.getPlayer();
-                dbManager.savePlayer(player);
-                break;
+    public void moveToward() {
+        int leftDist = map.getGhost().getX() - map.getPlayer().getX();
+        int upDist = map.getGhost().getY() - map.getPlayer().getY();
+        if (upDist == 0 && leftDist == 0) {
+            return;
         }
-    }
+        if (upDist > 0 && upDist >= leftDist) {
+            map.getGhost().move(0, -1);
+        } else if (upDist < 0 && upDist < leftDist) {
+            map.getGhost().move(0, 1);
+        } else if (leftDist > 0) {
+            map.getGhost().move(-1, 0);
+        } else {
+            map.getGhost().move(1, 0);
+        }}
+
+
+    //TODO: loop for never-ending music
+        public void sound ()  {
+            File mediaFile = new File("src/main/resources/music.mp3");
+            Media media = null;
+            try {
+                media = new Media(mediaFile.toURI().toURL().toString());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            assert media != null;
+            mediaPlayer = new MediaPlayer(media);
+//            mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(Duration.ZERO));
+//            mediaPlayer.setStopTime(Duration.INDEFINITE);
+//            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            mediaPlayer.play();
+//            mediaPlayer.cycleDurationProperty();
+//            if(!map.getPlayer().isDead()){
+//                mediaPlayer.play();
+//            }else{
+//                mediaPlayer.stop();
+//            }
+
+        }
+
+        private void onKeyPressed (KeyEvent keyEvent){
+
+            switch (keyEvent.getCode()) {
+                case UP:
+                     if(map.getActualMap()==1) moveNormal(0,-1);
+                     else if(map.getActualMap()==3)moveTroughWalls(0,-1);
+                     else map.getPlayer().move(0,-1);
+                    if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
+                    else map.setGhost(null);
+                    if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
+                    else map.setMonster(null);
+                    refresh();
+                    if (mediaPlayer.isMute()) {
+                        sound();
+                    }
+                    break;
+                case DOWN:
+                    if(map.getActualMap()==1)moveNormal(0,1);
+                    else if(map.getActualMap()==3)moveTroughWalls(0,1);
+                    else map.getPlayer().move(0,1);
+                    if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
+                    else map.setGhost(null);
+                    if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
+                    if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
+                    else map.setMonster(null);
+                    refresh();
+                    break;
+                case LEFT:
+                    if(map.getActualMap()==1)moveNormal(-1,0);
+                   else  if(map.getActualMap()==3)moveTroughWalls(-1,0);
+                    else map.getPlayer().move(-1,0);
+                    if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
+                    else map.setGhost(null);
+                    if(map.getMonster() != null && map.getMonster().getHealth()>0)map.getMonster().move();
+                    else map.setMonster(null);
+                    refresh();
+                    break;
+                case RIGHT:
+                    if(map.getActualMap()==1)moveNormal(1,0);
+                    else if(map.getActualMap()==3) moveTroughWalls(1,0);
+                    else map.getPlayer().move(1,0);
+                    if(map.getGhost() != null && map.getGhost().getHealth()>0) moveToward();
+                    else map.setGhost(null);
+                    if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
+                    else map.setMonster(null);
+                    refresh();
+                    break;
+            }
+            if (map.getActualMap() == 1 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
+                map = MapLoader.loadMap("/map2.txt");
+                map.setActualMap(2);
+            }
+            if (map.getActualMap() == 2 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
+                map = MapLoader.loadMap("/map3.txt");
+                map.setActualMap(3);
+            }
+            if(isWinner())hasWon();
+        }
+
+        public void moveNormal(int dx,int dy){
+            Cell cellTeleport=map.getPlayer().getCell().getNeighbor(dx,dy );
+            if (canTeleport(cellTeleport) != null &&(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--"))) {
+                map.getPlayer().moveToLocation(canTeleport(cellTeleport));
+            } else {
+                map.getPlayer().move(dx, dy);
+            }
+        }
+        public void moveTroughWalls(int dx,int dy){
+            if(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--")){
+                map.getPlayer().moveWally(dx,dy);
+            }
+        }
+
+        public void hasWon(){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("GAME INFO");
+            alert.setHeaderText("Results:");
+            alert.setContentText("YOU WON! Congrats");
+            alert.showAndWait();
+        }
+
+
 
     private void refresh() {
         context.setFill(Color.BLACK);
+        int screenX = (int) (map.getPlayer().getX() / 2 - 0.5);
+        int screenY = (int) (map.getPlayer().getY() / 2 - 0.5);
+        if(screenY >5){
+            screenY = screenY - (screenY-5);
+        }
         context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
         for (int x = 0; x < map.getWidth(); x++) {
+            int relativeX = x - screenX;
             for (int y = 0; y < map.getHeight(); y++) {
+                int relativeY = y - screenY;
                 Cell cell = map.getCell(x, y);
                 if (cell.getActor() != null) {
-                    Tiles.drawTile(context, cell.getActor(), x, y);
+                    Tiles.drawTile(context, cell.getActor(), relativeX, relativeY);
                 } else {
-                    Tiles.drawTile(context, cell, x, y);
+                    Tiles.drawTile(context, cell, relativeX, relativeY);
                 }
             }
         }
+        if (map.getPlayer().isDead()) {
+            System.out.println("you lost");
+            hasLost();
+        }
         healthLabel.setText("" + map.getPlayer().getHealth());
-    }
+        strengthLabel.setText("" + map.getPlayer().getStrength());
+        keyLabel.setText("" + map.getPlayer().isHasKey());
 
-    private void setupDbManager() {
-        dbManager = new GameDatabaseManager();
-        try {
-            dbManager.setup();
-        } catch (SQLException ex) {
-            System.out.println("Cannot connect to database.");
-        }
     }
+    public void hasLost(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("GAME INFO");
+        alert.setHeaderText("Results:");
+        alert.setContentText("YOU LOST! Congrats");
+        alert.showAndWait();
+    }
+        public Cell canTeleport (Cell cellt) {
+            Cell cellTeleport=map.getTeleportPrecise(3,18);
+            Cell toTeleport=map.getTeleportPrecise(18,17);
+            if (cellt == cellTeleport)
+                return toTeleport;
+            else return null;
+        }
 
-    private void exit() {
-        try {
-            stop();
-        } catch (Exception e) {
-            System.exit(1);
+        public boolean isWinner(){
+            return map.getMonster() == null && map.getGhost() == null && map.getActualMap() == 3 && map.getSkeleton() == null;
         }
-        System.exit(0);
+
     }
-}

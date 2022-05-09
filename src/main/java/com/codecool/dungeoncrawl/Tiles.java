@@ -28,11 +28,21 @@ public class Tiles {
         tileMap.put("floor", new Tile(2, 0));
         tileMap.put("player", new Tile(27, 0));
         tileMap.put("skeleton", new Tile(29, 6));
+        tileMap.put("mace", new Tile(10, 30));
+        tileMap.put("shield", new Tile(5, 25));
+        tileMap.put("health", new Tile(18, 28));
+        tileMap.put("key", new Tile(17, 23));
+        tileMap.put("monster", new Tile(29,2));
+        tileMap.put("ghost", new Tile(22,23));
+        tileMap.put("teleport", new Tile(30,28));
+        tileMap.put("door", new Tile(29,3));
+        tileMap.put("openDoor", new Tile(4, 30));
+        tileMap.put("ocean", new Tile(8, 5));
     }
 
-    public static void drawTile(GraphicsContext context, Drawable d, int x, int y) {
+    public static void drawTile(GraphicsContext context, Drawable d, int screenX, int screenY) {
         Tile tile = tileMap.get(d.getTileName());
         context.drawImage(tileset, tile.x, tile.y, tile.w, tile.h,
-                x * TILE_WIDTH, y * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH);
+                screenX * TILE_WIDTH, screenY * TILE_WIDTH, TILE_WIDTH, TILE_WIDTH);
     }
 }
