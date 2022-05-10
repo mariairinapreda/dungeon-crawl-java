@@ -22,13 +22,11 @@ public class GameDatabaseManager {
 
     private DataSource connect() throws SQLException {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        String dbName = "test";
-        String user = "test";
-        String password = "test";
+        ApplicationProperties properties=new ApplicationProperties();
+        dataSource.setDatabaseName(properties.readProperty("database"));
+        dataSource.setUser(properties.readProperty("user"));
+        dataSource.setPassword(properties.readProperty("password"));
 
-        dataSource.setDatabaseName(dbName);
-        dataSource.setUser(user);
-        dataSource.setPassword(password);
 
         System.out.println("Trying to connect");
         dataSource.getConnection().close();
