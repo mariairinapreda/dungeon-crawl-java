@@ -155,6 +155,7 @@ GameDatabaseManager gameDatabaseManager=setDataBase();
         });
 
 
+
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(canvas);
         borderPane.setTop(vBox);
