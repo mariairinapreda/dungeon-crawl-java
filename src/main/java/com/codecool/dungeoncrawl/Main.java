@@ -2,22 +2,13 @@ package com.codecool.dungeoncrawl;
 
 import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
 import com.codecool.dungeoncrawl.dao.GameStateDao;
-import com.codecool.dungeoncrawl.dao.GameStateDaoJdbc;
-import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
-import com.codecool.dungeoncrawl.dao.PlayerDao;
 import com.codecool.dungeoncrawl.logic.*;
-
-
 import com.codecool.dungeoncrawl.logic.Cell;
-import com.codecool.dungeoncrawl.model.GameState;
-import com.codecool.dungeoncrawl.model.GameState;
 import javafx.application.Application;
-
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.*;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
@@ -30,25 +21,14 @@ import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
-import javafx.stage.Window;
-import javafx.util.Duration;
 import javafx.scene.layout.VBox;
-
-import java.awt.*;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Objects;
-
-import static javafx.scene.input.KeyCode.CONTROL;
 import static javafx.scene.input.KeyCode.S;
 
 
@@ -78,14 +58,15 @@ public class Main extends Application {
     VBox vBox = new VBox(menuBar);
     Menu menuFile = new Menu("Load :)");
 
-    MenuItem menuItem =new MenuItem("First Loading Game");
+
+
 
 
     private String text;
 
 GameDatabaseManager gameDatabaseManager=setDataBase();
     GameStateDao gameStateDao=gameDatabaseManager.getGameStateDao();
-    int numberOfStates=gameStateDao.getAll().size();
+
 
     public void setText(String text) {
         this.text = text;
@@ -155,12 +136,12 @@ GameDatabaseManager gameDatabaseManager=setDataBase();
         });
 
 
-
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(canvas);
         borderPane.setTop(vBox);
         borderPane.setRight(ui);
-        menuFile.getItems().add(menuItem);
+        createItemsForMenu(menuFile);
+menuBar.setStyle(" ");
         menuBar.getMenus().add(menuFile);
 
 
@@ -178,7 +159,14 @@ GameDatabaseManager gameDatabaseManager=setDataBase();
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
     }
-
+public void createItemsForMenu(Menu menuFile){
+        int y=0;
+    int numberOfStates=gameStateDao.getAll().size();
+        while(y<numberOfStates){
+            MenuItem menuItem =new MenuItem(gameStateDao.getAll().get(y).getSavedAt()+gameStateDao.getAll().get(y).getPlayer().getPlayerName());
+            menuFile.getItems().add(menuItem);
+        }
+}
 
     public void moveToward() {
         int leftDist = map.getGhost().getX() - map.getPlayer().getX();
