@@ -1,18 +1,23 @@
 package com.codecool.dungeoncrawl;
 
+import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
+import com.codecool.dungeoncrawl.dao.GameStateDao;
+import com.codecool.dungeoncrawl.dao.GameStateDaoJdbc;
 import com.codecool.dungeoncrawl.logic.*;
 
 
+import com.codecool.dungeoncrawl.logic.Cell;
+import com.codecool.dungeoncrawl.model.GameState;
 import javafx.application.Application;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -21,9 +26,11 @@ import javafx.stage.Stage;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+import javafx.scene.layout.VBox;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.sql.SQLException;
 import java.util.Objects;
 
 
@@ -50,9 +57,18 @@ public class Main extends Application {
     TextField userTextField = new TextField();
     Button cheatCode=new Button("OK");
     MediaPlayer mediaPlayer;
+    MenuBar menuBar = new MenuBar();
+    VBox vBox = new VBox(menuBar);
+    Menu menuFile = new Menu("Load :)");
+
+    MenuItem menuItem =new MenuItem("First Loading Game");
+
+
     private String text;
 
-
+GameDatabaseManager gameDatabaseManager=setDataBase();
+    GameStateDao gameStateDao=gameDatabaseManager.getGameStateDao();
+    int numberOfStates=gameStateDao.getAll().size();
 
     public void setText(String text) {
         this.text = text;
@@ -66,6 +82,9 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
 
         sound();
+
+        setDataBase();
+
         GridPane ui = new GridPane();
         ui.setOnMousePressed(e -> ui.requestFocus());
         ui.setPrefWidth(200);
@@ -121,8 +140,10 @@ public class Main extends Application {
 
         BorderPane borderPane = new BorderPane();
         borderPane.setCenter(canvas);
-
+        borderPane.setTop(vBox);
         borderPane.setRight(ui);
+        menuFile.getItems().add(menuItem);
+        menuBar.getMenus().add(menuFile);
 
 
         Scene scene = new Scene(borderPane);
@@ -153,7 +174,16 @@ public class Main extends Application {
             map.getGhost().move(1, 0);
         }}
 
-
+public GameDatabaseManager setDataBase(){
+        try {
+            GameDatabaseManager gameDatabaseManager=new GameDatabaseManager();
+            gameDatabaseManager.setup();
+            return gameDatabaseManager;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+}
     //TODO: loop for never-ending music
         public void sound ()  {
             File mediaFile = new File("src/main/resources/music.mp3");

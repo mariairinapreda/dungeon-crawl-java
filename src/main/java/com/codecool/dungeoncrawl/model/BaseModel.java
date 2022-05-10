@@ -21,6 +21,7 @@ public class BaseModel {
             field.setAccessible(true);
             Object value = null;
             try {
+
                 value = field.get(this);
                 if (value != null) {
                     sb.append(field.getName() + ":" + value + ",");
