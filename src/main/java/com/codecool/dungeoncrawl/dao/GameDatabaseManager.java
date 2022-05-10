@@ -13,6 +13,7 @@ public class GameDatabaseManager {
     public void setup() throws SQLException {
         DataSource dataSource = connect();
         playerDao = new PlayerDaoJdbc(dataSource);
+
     }
 
     public void savePlayer(Player player) {
@@ -34,4 +35,6 @@ public class GameDatabaseManager {
 
         return dataSource;
     }
+
+
 }

@@ -1,8 +1,11 @@
 package com.codecool.dungeoncrawl;
 
+import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
+import com.codecool.dungeoncrawl.dao.PlayerDao;
 import com.codecool.dungeoncrawl.logic.*;
 
 
+import com.codecool.dungeoncrawl.model.GameState;
 import javafx.application.Application;
 
 import javafx.geometry.Insets;
@@ -13,19 +16,28 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
+import javafx.stage.Window;
 import javafx.util.Duration;
 
+import java.awt.*;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Objects;
 
+import static javafx.scene.input.KeyCode.CONTROL;
+import static javafx.scene.input.KeyCode.S;
 
 
 public class Main extends Application {
@@ -68,7 +80,7 @@ public class Main extends Application {
         sound();
         GridPane ui = new GridPane();
         ui.setOnMousePressed(e -> ui.requestFocus());
-        ui.setPrefWidth(200);
+        ui.setPrefWidth(270);
         ui.setPadding(new Insets(10));
         ui.add(new Label("Health: "), 0, 0);
         ui.add(healthLabel, 1, 0);
@@ -127,6 +139,10 @@ public class Main extends Application {
 
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
+//        primaryStage.initModality(Modality.APPLICATION_MODAL);
+//        primaryStage.setTitle("Swing in JavaFX");
+//        primaryStage.setScene(new Scene(borderPane, 250, 150));
+//        primaryStage.show();
 
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
@@ -165,21 +181,11 @@ public class Main extends Application {
             }
             assert media != null;
             mediaPlayer = new MediaPlayer(media);
-//            mediaPlayer.setOnEndOfMedia(() -> mediaPlayer.seek(Duration.ZERO));
-//            mediaPlayer.setStopTime(Duration.INDEFINITE);
-//            mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             mediaPlayer.play();
-//            mediaPlayer.cycleDurationProperty();
-//            if(!map.getPlayer().isDead()){
-//                mediaPlayer.play();
-//            }else{
-//                mediaPlayer.stop();
-//            }
-
         }
 
         private void onKeyPressed (KeyEvent keyEvent){
-
+            System.out.println(keyEvent.getCode());
             switch (keyEvent.getCode()) {
                 case UP:
                      if(map.getActualMap()==1) moveNormal(0,-1);
@@ -204,6 +210,9 @@ public class Main extends Application {
                     if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
                     else map.setMonster(null);
                     refresh();
+                    if (mediaPlayer.isMute()) {
+                        sound();
+                    }
                     break;
                 case LEFT:
                     if(map.getActualMap()==1)moveNormal(-1,0);
@@ -214,6 +223,9 @@ public class Main extends Application {
                     if(map.getMonster() != null && map.getMonster().getHealth()>0)map.getMonster().move();
                     else map.setMonster(null);
                     refresh();
+                    if (mediaPlayer.isMute()) {
+                        sound();
+                    }
                     break;
                 case RIGHT:
                     if(map.getActualMap()==1)moveNormal(1,0);
@@ -224,8 +236,19 @@ public class Main extends Application {
                     if(map.getMonster() != null && map.getMonster().getHealth()>0) map.getMonster().move();
                     else map.setMonster(null);
                     refresh();
+                    if (mediaPlayer.isMute()) {
+                        sound();
+                    }
                     break;
+                case CONTROL:
+                    KeyCharacterCombination combination = new KeyCharacterCombination(String.valueOf(S), KeyCombination.CONTROL_ANY);
+                    Stage dialog = new Stage();
+//                    dialog.initOwner(Arrays.stream();
+//                    dialog.initModality(Modality.ApplicationModal);
+//                    dialog.showAndWait();
             }
+
+
             if (map.getActualMap() == 1 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
                 map = MapLoader.loadMap("/map2.txt");
                 map.setActualMap(2);
@@ -237,7 +260,9 @@ public class Main extends Application {
             if(isWinner())hasWon();
         }
 
-        public void moveNormal(int dx,int dy){
+
+
+    public void moveNormal(int dx,int dy){
             Cell cellTeleport=map.getPlayer().getCell().getNeighbor(dx,dy );
             if (canTeleport(cellTeleport) != null &&(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--"))) {
                 map.getPlayer().moveToLocation(canTeleport(cellTeleport));
@@ -309,5 +334,9 @@ public class Main extends Application {
         public boolean isWinner(){
             return map.getMonster() == null && map.getGhost() == null && map.getActualMap() == 3 && map.getSkeleton() == null;
         }
+
+
+
+
 
     }
