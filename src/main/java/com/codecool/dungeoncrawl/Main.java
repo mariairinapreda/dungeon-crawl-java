@@ -6,6 +6,12 @@ import com.codecool.dungeoncrawl.logic.*;
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.model.GameState;
 import com.codecool.dungeoncrawl.model.PlayerModel;
+import com.codecool.dungeoncrawl.serialization.DataSerialization;
+import com.codecool.dungeoncrawl.serialization.SaveModel;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.codecool.dungeoncrawl.model.GameState;
+import com.codecool.dungeoncrawl.model.PlayerModel;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -23,6 +29,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -36,6 +43,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -51,6 +59,7 @@ public class Main extends Application {
 
     private final int mapSizeX = 15;
     private final int mapSizeY = 15;
+
     GameMap map = MapLoader.loadMap("/map.txt");
 //    Canvas canvas = new Canvas(
 //            map.getWidth() * Tiles.TILE_WIDTH,
@@ -175,6 +184,9 @@ menuBar.setStyle(" -fx-background-color: linear-gradient(to top right, #3B2667, 
 //        primaryStage.setTitle("Swing in JavaFX");
 //        primaryStage.setScene(new Scene(borderPane, 250, 150));
 //        primaryStage.show();
+
+
+
 
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
@@ -331,6 +343,31 @@ else createSecondModal();
                     break;
                 case CONTROL:
                     KeyCharacterCombination combination = new KeyCharacterCombination(String.valueOf(S), KeyCombination.CONTROL_ANY);
+
+                    Stage window = new Stage();
+                    window.initModality(Modality.APPLICATION_MODAL);
+                    window.setTitle("label");
+                    window.setMinWidth(350);
+                    window.setMinHeight(350);
+                    Label label = new Label();
+                    label.setText("yes");
+                    Scene scene = new Scene(label);
+                    window.setScene(scene);
+                    window.showAndWait();
+
+                    GameState currentState =  new GameState(map.toString(), new Date(System.currentTimeMillis()), new PlayerModel(map.getPlayer().getName(),
+                            map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
+                            map.getPlayer().isHasKey()));
+                    Gson gson = new GsonBuilder()
+                            .setPrettyPrinting()
+                            .excludeFieldsWithoutExposeAnnotation()
+                            .serializeNulls()
+                            .disableHtmlEscaping()
+                            .registerTypeAdapter(GameState.class, new DataSerialization())
+                            .create();
+
+                    String serializedMovie = gson.toJson(currentState);
+                    System.out.println(serializedMovie);
                     createModal("DO YOU WANNA SAVE?");
                     break;
                 case S:
@@ -423,9 +460,5 @@ else createSecondModal();
         public boolean isWinner(){
             return map.getMonster() == null && map.getGhost() == null && map.getActualMap() == 3 && map.getSkeleton() == null;
         }
-
-
-
-
 
     }
