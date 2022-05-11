@@ -10,6 +10,11 @@ import java.sql.SQLException;
 
 public class GameDatabaseManager {
     private GameStateDao gameStateDao;
+
+    public PlayerDao getPlayerDao() {
+        return playerDao;
+    }
+
     private PlayerDao playerDao;
 
     public GameStateDao getGameStateDao() {
@@ -26,9 +31,10 @@ public class GameDatabaseManager {
         gameStateDao=new GameStateDaoJdbc(dataSource, playerDao);
     }
 
-    public void savePlayer(Player player) {
+    public PlayerModel savePlayer(Player player) {
         PlayerModel model = new PlayerModel(player);
         playerDao.add(model);
+        return model;
 
     }
 

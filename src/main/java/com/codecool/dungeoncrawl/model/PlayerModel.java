@@ -2,6 +2,8 @@ package com.codecool.dungeoncrawl.model;
 
 import com.codecool.dungeoncrawl.logic.actors.Player;
 
+import java.util.List;
+
 public class PlayerModel extends BaseModel {
     private String playerName;
     private int hp;
@@ -9,6 +11,9 @@ public class PlayerModel extends BaseModel {
     private int x;
     private int y;
     private boolean key;
+    private List<String> gameNames;
+
+
 
 
     public int getStrength() {
@@ -29,13 +34,14 @@ public class PlayerModel extends BaseModel {
 
 
 
-    public PlayerModel(String playerName, int hp, int x, int y,int strength,boolean key) {
+    public PlayerModel(String playerName, int hp, int x, int y, int strength, boolean key) {
         this.playerName = playerName;
         this.hp = hp;
         this.x = x;
         this.y = y;
         this.strength=strength;
         this.key=key;
+
     }
 
     public PlayerModel(Player player) {

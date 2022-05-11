@@ -21,9 +21,7 @@ public class GameStateDaoJdbc implements GameStateDao {
         this.player=player;
     }
     public java.sql.Date getDateNow(){
-        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        Date date = new Date();
-        return java.sql.Date.valueOf(dateFormat.format(date));
+        return new java.sql.Date(System.currentTimeMillis());
     }
 
     @Override
@@ -32,7 +30,6 @@ public class GameStateDaoJdbc implements GameStateDao {
             String sql = "INSERT INTO game_state (current_map, saved_at, player_id) VALUES ( ?, ?, ?)";
             PreparedStatement statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, state.getCurrentMap());
-            state.setSavedAt(getDateNow());
             statement.setDate(2, state.getSavedAt());
             statement.setInt(3, 1);
             statement.executeUpdate();
@@ -40,6 +37,7 @@ public class GameStateDaoJdbc implements GameStateDao {
             resultSet.next();
             state.setId(resultSet.getInt(1));
         } catch (SQLException e) {
+
             throw new RuntimeException(e);
         }
 

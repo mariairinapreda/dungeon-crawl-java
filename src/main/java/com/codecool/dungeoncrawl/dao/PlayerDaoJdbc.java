@@ -88,4 +88,20 @@ public class PlayerDaoJdbc implements PlayerDao {
             throw new RuntimeException(e);
         }
     }
+
+    public List<String> getGameNames(int player_id){
+        List<String> names = new ArrayList<>();
+        try (Connection conn = dataSource.getConnection()) {
+            String sql = "SELECT id, name FROM name_game WHERE player_id=?";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, player_id);
+            ResultSet resultSet = statement.executeQuery();
+            if(!resultSet.next()) return null;
+            names.add(resultSet.getString(1));
+            return names;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
