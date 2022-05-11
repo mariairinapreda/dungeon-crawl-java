@@ -4,31 +4,46 @@ import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
 import com.codecool.dungeoncrawl.dao.GameStateDao;
 import com.codecool.dungeoncrawl.logic.*;
 import com.codecool.dungeoncrawl.logic.Cell;
+import com.codecool.dungeoncrawl.model.GameState;
+import com.codecool.dungeoncrawl.model.PlayerModel;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.layout.VBox;
+
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
+
 import static javafx.scene.input.KeyCode.S;
 
 
@@ -56,14 +71,18 @@ public class Main extends Application {
     MediaPlayer mediaPlayer;
     MenuBar menuBar = new MenuBar();
     VBox vBox = new VBox(menuBar);
-    Menu menuFile = new Menu("Load :)");
-
-
-
+    Menu menuFile = new Menu("MENU");
+   MenuItem load=new MenuItem("LOAD");
+   MenuItem save=new MenuItem("SAVE");
+   MenuItem exit =new MenuItem("EXIT");
+   MenuItem loaddb=new MenuItem("DB");
+   MenuItem loadser=new MenuItem("DESERIALIZATION");
+   MenuItem savedb=new MenuItem("DB");
+   MenuItem saveser=new MenuItem("SERIALIZATION");
 
 
     private String text;
-
+    ArrayList gameNames=new ArrayList<String>();
 GameDatabaseManager gameDatabaseManager=setDataBase();
     GameStateDao gameStateDao=gameDatabaseManager.getGameStateDao();
 
@@ -140,8 +159,13 @@ GameDatabaseManager gameDatabaseManager=setDataBase();
         borderPane.setCenter(canvas);
         borderPane.setTop(vBox);
         borderPane.setRight(ui);
-        createItemsForMenu(menuFile);
-menuBar.setStyle(" ");
+//          createItemsForMenu();
+
+        menuFile.getItems().addAll(load,save, exit);
+        menuFile.setStyle("-fx-background-color: transparent;");
+
+
+menuBar.setStyle(" -fx-background-color: linear-gradient(to top right, #3B2667, #BC78EC); ");
         menuBar.getMenus().add(menuFile);
 
 
@@ -207,6 +231,47 @@ public GameDatabaseManager setDataBase(){
             mediaPlayer = new MediaPlayer(media);
             mediaPlayer.play();
         }
+        public boolean isNameUsed(String name){
+if(gameNames.contains(name)) return true;
+else return false;
+        }
+
+        public void createSecondModal(){
+            TextInputDialog dialog=new TextInputDialog();
+            dialog.setTitle("OVERWRITE?");
+            dialog.getDialogPane().setContentText("Would you like to overwrite the already existing state? YES/NO");
+            Optional<String> result=dialog.showAndWait();
+            TextField input=dialog.getEditor();
+            if(result.get().equals("YES")){
+                gameDatabaseManager.getPlayerDao().update(gameDatabaseManager.savePlayer(map.getPlayer()));
+                GameState gameState=new GameState(gameStateDao.toString(), getDateNowNow(),gameDatabaseManager.savePlayer(map.getPlayer()));
+                gameStateDao.update(gameState);
+            };
+
+        }
+    public Date getDateNowNow(){
+        java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
+        return sqlDate;}
+
+
+
+        public void createModal(String message){
+            TextInputDialog dialog=new TextInputDialog();
+            dialog.setTitle("SAVE GAME");
+            dialog.getDialogPane().setContentText("TYPE SAVING NAME");
+            Optional<String> result=dialog.showAndWait();
+TextField input=dialog.getEditor();
+            System.out.println(result);
+if(!isNameUsed(result.get())){
+    gameDatabaseManager.getPlayerDao().add(gameDatabaseManager.savePlayer(map.getPlayer()));
+    GameState gameState=new GameState(gameStateDao.toString(), getDateNowNow(),gameDatabaseManager.savePlayer(map.getPlayer()));
+    gameStateDao.add(gameState);
+
+    gameNames.add(result.get());}
+else createSecondModal();
+        }
+
+
 
         private void onKeyPressed (KeyEvent keyEvent){
             System.out.println(keyEvent.getCode());
@@ -266,10 +331,10 @@ public GameDatabaseManager setDataBase(){
                     break;
                 case CONTROL:
                     KeyCharacterCombination combination = new KeyCharacterCombination(String.valueOf(S), KeyCombination.CONTROL_ANY);
-                    Stage dialog = new Stage();
-//                    dialog.initOwner(Arrays.stream();
-//                    dialog.initModality(Modality.ApplicationModal);
-//                    dialog.showAndWait();
+                    createModal("DO YOU WANNA SAVE?");
+                    break;
+                case S:
+
             }
 
 
