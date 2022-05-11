@@ -4,6 +4,12 @@ import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
 import com.codecool.dungeoncrawl.dao.GameStateDao;
 import com.codecool.dungeoncrawl.logic.*;
 import com.codecool.dungeoncrawl.logic.Cell;
+import com.codecool.dungeoncrawl.model.GameState;
+import com.codecool.dungeoncrawl.model.PlayerModel;
+import com.codecool.dungeoncrawl.serialization.DataSerialization;
+import com.codecool.dungeoncrawl.serialization.SaveModel;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -21,13 +27,16 @@ import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.layout.VBox;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.Objects;
 import static javafx.scene.input.KeyCode.S;
 
@@ -36,6 +45,7 @@ public class Main extends Application {
 
     private final int mapSizeX = 15;
     private final int mapSizeY = 15;
+
     GameMap map = MapLoader.loadMap("/map.txt");
 //    Canvas canvas = new Canvas(
 //            map.getWidth() * Tiles.TILE_WIDTH,
@@ -141,7 +151,7 @@ GameDatabaseManager gameDatabaseManager=setDataBase();
         borderPane.setTop(vBox);
         borderPane.setRight(ui);
         createItemsForMenu(menuFile);
-menuBar.setStyle(" ");
+        menuBar.setStyle(" ");
         menuBar.getMenus().add(menuFile);
 
 
@@ -151,6 +161,9 @@ menuBar.setStyle(" ");
 //        primaryStage.setTitle("Swing in JavaFX");
 //        primaryStage.setScene(new Scene(borderPane, 250, 150));
 //        primaryStage.show();
+
+            
+
 
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
@@ -266,10 +279,31 @@ public GameDatabaseManager setDataBase(){
                     break;
                 case CONTROL:
                     KeyCharacterCombination combination = new KeyCharacterCombination(String.valueOf(S), KeyCombination.CONTROL_ANY);
-                    Stage dialog = new Stage();
-//                    dialog.initOwner(Arrays.stream();
-//                    dialog.initModality(Modality.ApplicationModal);
-//                    dialog.showAndWait();
+
+                    Stage window = new Stage();
+                    window.initModality(Modality.APPLICATION_MODAL);
+                    window.setTitle("label");
+                    window.setMinWidth(350);
+                    window.setMinHeight(350);
+                    Label label = new Label();
+                    label.setText("yes");
+                    Scene scene = new Scene(label);
+                    window.setScene(scene);
+                    window.showAndWait();
+
+                    GameState currentState =  new GameState(map.toString(), new Date(System.currentTimeMillis()), new PlayerModel(map.getPlayer().getName(),
+                            map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
+                            map.getPlayer().isHasKey()));
+                    Gson gson = new GsonBuilder()
+                            .setPrettyPrinting()
+                            .excludeFieldsWithoutExposeAnnotation()
+                            .serializeNulls()
+                            .disableHtmlEscaping()
+                            .registerTypeAdapter(GameState.class, new DataSerialization())
+                            .create();
+
+                    String serializedMovie = gson.toJson(currentState);
+                    System.out.println(serializedMovie);
             }
 
 
@@ -358,9 +392,5 @@ public GameDatabaseManager setDataBase(){
         public boolean isWinner(){
             return map.getMonster() == null && map.getGhost() == null && map.getActualMap() == 3 && map.getSkeleton() == null;
         }
-
-
-
-
 
     }

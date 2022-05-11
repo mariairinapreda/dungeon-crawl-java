@@ -1,5 +1,7 @@
 package com.codecool.dungeoncrawl.model;
 
+import com.google.gson.JsonElement;
+
 import java.lang.reflect.Field;
 
 public class BaseModel {
