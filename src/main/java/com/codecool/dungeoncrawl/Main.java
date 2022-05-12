@@ -7,12 +7,14 @@ import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.model.GameState;
 import com.codecool.dungeoncrawl.model.PlayerModel;
+import com.codecool.dungeoncrawl.serialization.DataDeSerialization;
 import com.codecool.dungeoncrawl.serialization.DataSerialization;
 import com.codecool.dungeoncrawl.serialization.SaveModel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.codecool.dungeoncrawl.model.GameState;
 import com.codecool.dungeoncrawl.model.PlayerModel;
+import com.google.gson.reflect.TypeToken;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -41,10 +43,14 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.layout.VBox;
 
+import java.io.*;
+import java.lang.reflect.Type;
+
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.nio.file.Path;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -58,6 +64,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import static javafx.scene.input.KeyCode.RECORD;
 import static javafx.scene.input.KeyCode.S;
 
 
@@ -65,6 +75,8 @@ public class Main extends Application {
 
     private final int mapSizeX = 15;
     private final int mapSizeY = 15;
+    private CopyOnWriteArrayList<String> jsonFiles = getFilesFromDirectory();
+
 
     GameMap map = MapLoader.loadMap("/map.txt");
 //    Canvas canvas = new Canvas(
@@ -79,21 +91,24 @@ public class Main extends Application {
     Label healthLabel = new Label();
     Label strengthLabel = new Label();
     Label keyLabel = new Label();
-    Button button=new Button("Accept");
+    Button button = new Button("Accept");
     Label userName = new Label("Cheat:");
     TextField userTextField = new TextField();
-    Button cheatCode=new Button("OK");
+    Button cheatCode = new Button("OK");
     MediaPlayer mediaPlayer;
     MenuBar menuBar = new MenuBar();
     VBox vBox = new VBox(menuBar);
+    Menu menuFile = new Menu("Load :)");
+
+
     Menu menuFile = new Menu("MENU");
    MenuItem load=new MenuItem("LOAD");
    MenuItem save=new MenuItem("SAVE");
    MenuItem exit =new MenuItem("EXIT");
     private String text;
 
-GameDatabaseManager gameDatabaseManager=setDataBase();
-    GameStateDao gameStateDao=gameDatabaseManager.getGameStateDao();
+    GameDatabaseManager gameDatabaseManager = setDataBase();
+    GameStateDao gameStateDao = gameDatabaseManager.getGameStateDao();
 
 
 
@@ -111,6 +126,10 @@ GameDatabaseManager gameDatabaseManager=setDataBase();
         sound();
 
         setDataBase();
+        String text = readFromText();
+        System.out.println(text);
+        deSerializeFromText(text);
+
 
         GridPane ui = new GridPane();
         ui.setOnMousePressed(e -> ui.requestFocus());
@@ -184,6 +203,12 @@ GameDatabaseManager gameDatabaseManager=setDataBase();
         exit.setOnAction(actionEvent -> System.exit(0));
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
+//        primaryStage.initModality(Modality.APPLICATION_MODAL);
+//        primaryStage.setTitle("Swing in JavaFX");
+//        primaryStage.setScene(new Scene(borderPane, 250, 150));
+//        primaryStage.show();
+
+
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
         primaryStage.setTitle("Dungeon Crawl");
@@ -210,6 +235,73 @@ public void loadModal(){
     window.showAndWait();
 
 }
+
+    public GameState deSerializeFromText(String text) {
+        Type gameStateType = new TypeToken<GameState>() {
+        }.getType();
+        Gson gson = new GsonBuilder()
+                .registerTypeAdapter(GameState.class, new DataDeSerialization())
+                .create();
+        GameState gameState = gson.fromJson(text, gameStateType);
+        return gameState;
+    }
+
+//    public String readFRomText() {
+//        System.out.println("Input text..");
+//        Scanner input = new Scanner(System.in);
+//        String inputString = input.nextLine();
+//        try {
+//            File file = new File("src/main/java/jsonStrings/" + inputString + ".txt");
+//            Scanner fileReader = new Scanner(file);
+//            System.out.println(fileReader);
+//            List<String> textContent = new ArrayList<>();
+//            while (fileReader.hasNextLine()) {
+//                System.out.println(fileReader.nextLine());
+//                textContent.add(fileReader.nextLine());
+//            }
+//            String str = "";
+//            for(int i=0; i < textContent.size(); i++){
+//                str += textContent.get(i);
+//            }
+//            return str;
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return null;
+//    }
+    public String readFromText(){
+        System.out.println("Input text..");
+        Scanner input = new Scanner(System.in);
+        String inputString = input.nextLine();
+        Path filePath = Path.of("src/main/java/jsonStrings/"+ inputString + ".txt");
+        StringBuilder contentBuilder = new StringBuilder();
+        try (BufferedReader br = new BufferedReader(new FileReader(String.valueOf(filePath))))
+        {
+
+            String sCurrentLine;
+            while ((sCurrentLine = br.readLine()) != null)
+            {
+                contentBuilder.append(sCurrentLine).append("\n");
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return contentBuilder.toString();
+    }
+
+
+    public void createItemsForMenu(Menu menuFile) {
+        int y = 0;
+        int numberOfStates = gameStateDao.getAll().size();
+        while (y < numberOfStates) {
+            MenuItem menuItem = new MenuItem(gameStateDao.getAll().get(y).getSavedAt() + gameStateDao.getAll().get(y).getPlayer().getPlayerName());
+            menuFile.getItems().add(menuItem);
+        }
+    }
 
 public void loadGame(String name){
 GameState gameState=gameStateDao.get(name);
@@ -244,18 +336,20 @@ public void loading(String file,PlayerModel player,GameState gamestate){
             map.getGhost().move(-1, 0);
         } else {
             map.getGhost().move(1, 0);
-        }}
+        }
+    }
 
-public GameDatabaseManager setDataBase(){
+    public GameDatabaseManager setDataBase() {
         try {
-            GameDatabaseManager gameDatabaseManager=new GameDatabaseManager();
+            GameDatabaseManager gameDatabaseManager = new GameDatabaseManager();
             gameDatabaseManager.setup();
             return gameDatabaseManager;
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
-}
+    }
+
     //TODO: loop for never-ending music
         public void sound ()  {
             File mediaFile = new File("src/main/resources/music.mp3");
@@ -316,7 +410,88 @@ if(!isNameUsed(result.get())){
 else createSecondModal(result.get(),id);
         }
 
+    public void sound() {
+        File mediaFile = new File("src/main/resources/music.mp3");
+        Media media = null;
+        try {
+            media = new Media(mediaFile.toURI().toURL().toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        assert media != null;
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.play();
+    }
 
+    private void onKeyPressed(KeyEvent keyEvent) {
+        System.out.println(keyEvent.getCode());
+        switch (keyEvent.getCode()) {
+            case UP:
+                if (map.getActualMap() == 1) moveNormal(0, -1);
+                else if (map.getActualMap() == 3) moveTroughWalls(0, -1);
+                else map.getPlayer().move(0, -1);
+                if (map.getGhost() != null && map.getGhost().getHealth() > 0) moveToward();
+                else map.setGhost(null);
+                if (map.getMonster() != null && map.getMonster().getHealth() > 0) map.getMonster().move();
+                else map.setMonster(null);
+                refresh();
+                if (mediaPlayer.isMute()) {
+                    sound();
+                }
+                break;
+            case DOWN:
+                if (map.getActualMap() == 1) moveNormal(0, 1);
+                else if (map.getActualMap() == 3) moveTroughWalls(0, 1);
+                else map.getPlayer().move(0, 1);
+                if (map.getGhost() != null && map.getGhost().getHealth() > 0) moveToward();
+                else map.setGhost(null);
+                if (map.getMonster() != null && map.getMonster().getHealth() > 0) map.getMonster().move();
+                if (map.getMonster() != null && map.getMonster().getHealth() > 0) map.getMonster().move();
+                else map.setMonster(null);
+                refresh();
+                if (mediaPlayer.isMute()) {
+                    sound();
+                }
+                break;
+            case LEFT:
+                if (map.getActualMap() == 1) moveNormal(-1, 0);
+                else if (map.getActualMap() == 3) moveTroughWalls(-1, 0);
+                else map.getPlayer().move(-1, 0);
+                if (map.getGhost() != null && map.getGhost().getHealth() > 0) moveToward();
+                else map.setGhost(null);
+                if (map.getMonster() != null && map.getMonster().getHealth() > 0) map.getMonster().move();
+                else map.setMonster(null);
+                refresh();
+                if (mediaPlayer.isMute()) {
+                    sound();
+                }
+                break;
+            case RIGHT:
+                if (map.getActualMap() == 1) moveNormal(1, 0);
+                else if (map.getActualMap() == 3) moveTroughWalls(1, 0);
+                else map.getPlayer().move(1, 0);
+                if (map.getGhost() != null && map.getGhost().getHealth() > 0) moveToward();
+                else map.setGhost(null);
+                if (map.getMonster() != null && map.getMonster().getHealth() > 0) map.getMonster().move();
+                else map.setMonster(null);
+                refresh();
+                if (mediaPlayer.isMute()) {
+                    sound();
+                }
+                break;
+            case CONTROL:
+                KeyCharacterCombination combination = new KeyCharacterCombination(String.valueOf(S), KeyCombination.CONTROL_ANY);
+                System.out.println(combination);
+                Stage window = new Stage();
+                window.initModality(Modality.APPLICATION_MODAL);
+                window.setTitle("label");
+                window.setMinWidth(350);
+                window.setMinHeight(350);
+                Label label = new Label();
+                label.setText("yes");
+                Scene scene = new Scene(label);
+                window.setScene(scene);
+                window.showAndWait();
         private void onKeyPressed (KeyEvent keyEvent){
             switch (keyEvent.getCode()) {
                 case UP:
@@ -396,7 +571,29 @@ else createSecondModal(result.get(),id);
                             .disableHtmlEscaping()
                             .registerTypeAdapter(GameState.class, new DataSerialization())
                             .create();
+                GameState currentState = new GameState(map.toString(), new Date(System.currentTimeMillis()), new PlayerModel(map.getPlayer().getName(),
+                        map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
+                        map.getPlayer().isHasKey()));
+                Gson gson = new GsonBuilder()
+                        .setPrettyPrinting()
+                        .excludeFieldsWithoutExposeAnnotation()
+                        .serializeNulls()
+                        .disableHtmlEscaping()
+                        .registerTypeAdapter(GameState.class, new DataSerialization())
+                        .create();
 
+                String serializedMovie = gson.toJson(currentState);
+                System.out.println(serializedMovie);
+                System.out.println("Input..");
+                Scanner input = new Scanner(System.in);
+                String inputString = input.nextLine();
+
+                if (isPossibleToAddNewGameStateFile(inputString, jsonFiles)) {
+                    createNewFileGameState(inputString, serializedMovie);
+                } else {
+                    overwriteGameStateFile(inputString, serializedMovie);
+                }
+        }
                     String serializedMovie = gson.toJson(currentState);
                     System.out.println(serializedMovie);
 
@@ -406,18 +603,70 @@ else createSecondModal(result.get(),id);
 
 
 
-            if (map.getActualMap() == 1 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
-                map = MapLoader.loadMap("/map2.txt");
-                map.setActualMap(2);
-            }
-            if (map.getActualMap() == 2 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
-                map = MapLoader.loadMap("/map3.txt");
-                map.setActualMap(3);
-            }
-            if(isWinner())hasWon();
+        if (map.getActualMap() == 1 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
+            map = MapLoader.loadMap("/map2.txt");
+            map.setActualMap(2);
         }
+        if (map.getActualMap() == 2 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
+            map = MapLoader.loadMap("/map3.txt");
+            map.setActualMap(3);
+        }
+        if (isWinner()) hasWon();
+    }
+
+    public CopyOnWriteArrayList<String> getFilesFromDirectory() {
+        String[] pathnames;
+        File folder = new File("src/main/java/jsonStrings");
+        pathnames = folder.list();
+        for (String pathname : pathnames) {
+            System.out.println(pathname);
+        }
+        return new CopyOnWriteArrayList<>(pathnames);
+
+    }
 
 
+
+    public void createNewFileGameState(String input, String content){
+        try {
+            File myObj = new File("src/main/java/jsonStrings/"+input+".txt");
+            FileWriter file = new FileWriter(myObj);
+            file.append(content);
+            file.close();
+            System.out.println(myObj.getName());
+            System.out.println(myObj.getAbsolutePath());
+            if (myObj.createNewFile()) {
+                System.out.println("File created: " + myObj.getName());
+
+            } else {
+                System.out.println("File already exists.");
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    public boolean isPossibleToAddNewGameStateFile(String input,  List<String> jsonFiles){
+        for (String jsonFile : jsonFiles) {
+            if(!jsonFile.equals(input) && input != null) {
+                jsonFiles.add(input);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void overwriteGameStateFile(String input, String content){
+        try {
+            FileWriter f2 = new FileWriter(input, false);
+            f2.write(content);
+            f2.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public void moveNormal(int dx,int dy){
             Cell cellTeleport=map.getPlayer().getCell().getNeighbor(dx,dy );
