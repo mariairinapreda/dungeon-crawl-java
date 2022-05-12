@@ -9,11 +9,29 @@ public class GameState extends BaseModel {
     private String currentMap;
     private List<String> discoveredMaps = new ArrayList<>();
     private PlayerModel player;
+    private int actualMap;
+    private String name;
 
-    public GameState(String currentMap, Date savedAt, PlayerModel player) {
+    public GameState(String currentMap, Date savedAt, PlayerModel player, int actualMap, String name) {
         this.currentMap = currentMap;
         this.savedAt = savedAt;
         this.player = player;
+        this.actualMap = actualMap;
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+
+
+    public int getActualMap() {
+        return actualMap;
+    }
+
+    public void setActualMap(int actualMap) {
+        this.actualMap = actualMap;
     }
 
     public Date getSavedAt() {

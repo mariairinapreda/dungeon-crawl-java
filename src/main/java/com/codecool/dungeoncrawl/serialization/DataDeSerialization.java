@@ -23,8 +23,10 @@ public class DataDeSerialization implements JsonDeserializer<GameState> {
         JsonElement jsonPlayerY = jsonObject.get("player_y_position");
         JsonElement jsonPlayerHasKey = jsonObject.get("player_has_key");
         JsonElement jsonGameMap = jsonObject.get("map_address");
+        JsonElement jsonGameActualMap = jsonObject.get("map_actualMap");
+        JsonElement jsonGameMapName = jsonObject.get("map_name");
         PlayerModel playerModel = new PlayerModel(jsonPlayerName.toString(), jsonPlayerHealth.getAsInt(), jsonPlayerX.getAsInt(),
                 jsonPlayerY.getAsInt(), jsonPlayerStrength.getAsInt(), jsonPlayerHasKey.getAsBoolean());
-        return new GameState(jsonGameMap.toString(), new Date(System.currentTimeMillis()), playerModel);
+        return new GameState(jsonGameMap.toString(), new Date(System.currentTimeMillis()), playerModel, jsonGameActualMap.getAsInt(), jsonGameMapName.getAsString());
     }
 }

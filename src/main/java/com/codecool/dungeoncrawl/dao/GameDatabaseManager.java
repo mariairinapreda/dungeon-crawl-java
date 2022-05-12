@@ -16,6 +16,10 @@ public class GameDatabaseManager {
         return gameStateDao;
     }
 
+    public PlayerDao getPlayerDao(){
+        return playerDao;
+    }
+
 
 
 
