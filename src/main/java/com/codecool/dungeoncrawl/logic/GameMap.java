@@ -99,4 +99,58 @@ public class GameMap {
     public int getHeight() {
         return worldY;
     }
+
+    @Override
+    public String toString(){
+        StringBuilder map = new StringBuilder();
+        map.append("    "+ cells.length+ "  "+ cells[0].length + "\n");
+        for(int i =0; i < cells.length;i++){
+            for(int j=0; j < cells[0].length;j++){
+                if(cells[i][j].getType() == CellType.SHIELD){
+                    map.append('K');
+                }
+                if(cells[i][j].getType() == CellType.DOOR){
+                    map.append('D');
+                }
+                if(cells[i][j].getType() == CellType.HEALTH){
+                    map.append('O');
+                }
+                if(cells[i][j].getType() == CellType.EMPTY){
+                    map.append(' ');
+                }
+                if(cells[i][j].getType() == CellType.KEY){
+                    map.append('W');
+                }
+                if(cells[i][j].getType() == CellType.MACE){
+                    map.append('M');
+                }
+                if(cells[i][j].getType() == CellType.TELEPORT){
+                    map.append('T');
+                }
+                if(cells[i][j].getType() == CellType.OCEAN){
+                    map.append('P');
+                }
+                if(cells[i][j].getType() == CellType.MONSTER){
+                    map.append('E');
+                }
+                if(cells[i][j].getType() == CellType.GHOST){
+                    map.append('G');
+                }
+                if(cells[i][j].getType() == CellType.WALL){
+                    map.append('#');
+                }
+                if(cells[i][j].getType() == CellType.FLOOR){
+                    map.append('.');
+                }
+                if(cells[i][j].getType() == CellType.SKELETON){
+                    map.append('s');
+                }
+                if(cells[i][j] == cells[player.getX()][player.getY()]){
+                    map.append('@');
+                }
+            }
+            map.append('\n');
+        }
+        return map.toString();
+    }
 }

@@ -1,8 +1,10 @@
 package com.codecool.dungeoncrawl.dao;
+import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.model.GameState;
 import com.codecool.dungeoncrawl.model.PlayerModel;
 
 import javax.sql.DataSource;
+import java.io.File;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,6 +31,9 @@ public class GameStateDaoJdbc implements GameStateDao {
         try (Connection conn = dataSource.getConnection()) {
             String sql = "INSERT INTO game_state (current_map, saved_at, player_id, name, actual_map) VALUES ( ?, ?, ?, ?, ?)";
             PreparedStatement statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            StringBuilder map = new StringBuilder();
+            String file = new File(state.getCurrentMap()).toString();
+
             statement.setString(1, state.getCurrentMap());
             statement.setDate(2, state.getSavedAt());
             statement.setInt(3, player_id);
@@ -38,6 +43,7 @@ public class GameStateDaoJdbc implements GameStateDao {
             ResultSet resultSet = statement.getGeneratedKeys();
             resultSet.next();
             state.setId(resultSet.getInt(1));
+
         } catch (SQLException e) {
 
             throw new RuntimeException(e);

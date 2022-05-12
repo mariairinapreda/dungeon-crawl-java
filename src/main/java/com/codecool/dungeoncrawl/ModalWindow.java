@@ -4,12 +4,14 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 
 import java.util.Collection;
+import java.util.Optional;
 
 public class ModalWindow {
     private boolean answer;
@@ -28,9 +30,8 @@ public class ModalWindow {
         window.setMinHeight(350);
         Label label = new Label();
         label.setText(message);
-
-        Button yesButton = new Button("Yes");
-        Button noButton = new Button("No");
+        Button yesButton = new Button("Save");
+        Button noButton = new Button("Cancel");
 
         yesButton.setOnAction(e -> {
             answer = true;
@@ -48,5 +49,13 @@ public class ModalWindow {
         window.setScene(scene);
         window.showAndWait();
         return answer;
+    }
+
+    public String gameName(){
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("SAVE GAME");
+        dialog.getDialogPane().setContentText("TYPE SAVING NAME");
+        Optional<String> result = dialog.showAndWait();
+        return result.isPresent()? result.get(): "";
     }
 }

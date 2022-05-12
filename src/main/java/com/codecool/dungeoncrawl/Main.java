@@ -2,6 +2,7 @@ package com.codecool.dungeoncrawl;
 
 import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
 import com.codecool.dungeoncrawl.dao.GameStateDao;
+import com.codecool.dungeoncrawl.dao.PlayerDao;
 import com.codecool.dungeoncrawl.logic.*;
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.actors.Player;
@@ -79,6 +80,7 @@ public class Main extends Application {
 
     GameDatabaseManager gameDatabaseManager = setDataBase();
     GameStateDao gameStateDao = gameDatabaseManager.getGameStateDao();
+    PlayerDao playerDao = gameDatabaseManager.getPlayerDao();
 
 
     public void setText(String text) {
@@ -205,8 +207,12 @@ public class Main extends Application {
         int id = gameDatabaseManager.getGameStateDao().getPlayerId(gameState.getId());
         PlayerModel player = gameDatabaseManager.getPlayerDao().get(id);
         String file;
-        if (gameState.getActualMap() == 1) file = "/mapthis.txt";
-        else if (gameState.getActualMap() == 2) file = "/mapthis2.txt";
+        if (gameState.getActualMap() == 1){
+            file = "/mapthis.txt";
+        }
+        else if (gameState.getActualMap() == 2) {
+            file = "/mapthis2.txt";
+        }
         else {
             file = "/mapthis3.txt";
         }
@@ -271,8 +277,7 @@ public class Main extends Application {
         dialog.setTitle("OVERWRITE?");
         dialog.getDialogPane().setContentText("Would you like to overwrite the already existing state? YES/NO");
         Optional<String> result = dialog.showAndWait();
-        TextField input = dialog.getEditor();
-        if (result.get().equals("YES")) {
+        if (result.get().equalsIgnoreCase("YES")) {
             PlayerModel playermodal = new PlayerModel(map.getPlayer().getName(),
                     map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
                     map.getPlayer().isHasKey());
@@ -280,6 +285,8 @@ public class Main extends Application {
             GameState currentState = new GameState(map.toString(), new Date(System.currentTimeMillis()), playermodal,  map.getActualMap(), name);
             GameState oldGameState = gameStateDao.get(name);
             gameStateDao.update(currentState, oldGameState.getId(), id);
+//            playerDao.update();
+
         }
     }
 
@@ -288,7 +295,6 @@ public class Main extends Application {
         dialog.setTitle("SAVE GAME");
         dialog.getDialogPane().setContentText("TYPE SAVING NAME");
         Optional<String> result = dialog.showAndWait();
-        TextField input = dialog.getEditor();
         PlayerModel playermodal = new PlayerModel(map.getPlayer().getName(),
                 map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
                 map.getPlayer().isHasKey());
@@ -329,7 +335,6 @@ public class Main extends Application {
         return null;
     }
 
-    //TODO: loop for never-ending music
     public void sound() {
         File mediaFile = new File("src/main/resources/music.mp3");
         Media media = null;
@@ -340,7 +345,7 @@ public class Main extends Application {
         }
         assert media != null;
         mediaPlayer = new MediaPlayer(media);
-        mediaPlayer.play();
+//        mediaPlayer.play();
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
@@ -400,41 +405,41 @@ public class Main extends Application {
                 }
                 break;
             case CONTROL:
+                //TO:DO
                 KeyCharacterCombination combination = new KeyCharacterCombination(String.valueOf(S), KeyCombination.CONTROL_ANY);
-                System.out.println(combination);
-                Stage window = new Stage();
-                window.initModality(Modality.APPLICATION_MODAL);
-                window.setTitle("label");
-                window.setMinWidth(350);
-                window.setMinHeight(350);
-                Label label = new Label();
-                label.setText("yes");
-                Scene scene = new Scene(label);
-                window.setScene(scene);
-                window.showAndWait();
-                System.out.println("Input..");
-                Scanner input = new Scanner(System.in);
-                String inputString = input.nextLine();
-                GameState currentState = new GameState(map.toString(), new Date(System.currentTimeMillis()), new PlayerModel(map.getPlayer().getName(),
-                        map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
-                        map.getPlayer().isHasKey()),map.getActualMap(), inputString);
-                Gson gson = new GsonBuilder()
-                        .setPrettyPrinting()
-                        .excludeFieldsWithoutExposeAnnotation()
-                        .serializeNulls()
-                        .disableHtmlEscaping()
-                        .registerTypeAdapter(GameState.class, new DataSerialization())
-                        .create();
+                ModalWindow modalWindow = new ModalWindow();
+                modalWindow.display("save game", "Do you want to save?");
+//                Stage window = new Stage();
+//                window.initModality(Modality.APPLICATION_MODAL);
+//                window.setTitle("label");
+//                window.setMinWidth(350);
+//                window.setMinHeight(350);
+//                Label label = new Label();
+//                label.setText("yes");
+//                Scene scene = new Scene(label);
+//                window.setScene(scene);
+//                window.showAndWait();
+                    String inputString = modalWindow.gameName();
+                    GameState currentState = new GameState(map.toString(), new Date(System.currentTimeMillis()), new PlayerModel(map.getPlayer().getName(),
+                            map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
+                            map.getPlayer().isHasKey()), map.getActualMap(), inputString);
+                    Gson gson = new GsonBuilder()
+                            .setPrettyPrinting()
+                            .excludeFieldsWithoutExposeAnnotation()
+                            .serializeNulls()
+                            .disableHtmlEscaping()
+                            .registerTypeAdapter(GameState.class, new DataSerialization())
+                            .create();
 
-                String serializedMovie = gson.toJson(currentState);
-                System.out.println(serializedMovie);
+                    String serializedMovie = gson.toJson(currentState);
 
 
-                if (isPossibleToAddNewGameStateFile(inputString, jsonFiles)) {
-                    createNewFileGameState(inputString, serializedMovie);
-                } else {
-                    overwriteGameStateFile(inputString, serializedMovie);
-                }
+                    if (isPossibleToAddNewGameStateFile(inputString, jsonFiles)) {
+                        createNewFileGameState(inputString, serializedMovie);
+                    } else {
+                        overwriteGameStateFile(inputString, serializedMovie);
+                    }
+                    break;
             case SHIFT:
                 String text = readFromText();
                 deSerializeFromText(text);
@@ -566,6 +571,7 @@ public class Main extends Application {
         alert.setHeaderText("Results:");
         alert.setContentText("YOU LOST! Congrats");
         alert.showAndWait();
+        System.exit(0);
     }
         public Cell canTeleport (Cell cellt) {
             Cell cellTeleport=map.getTeleportPrecise(3,18);
