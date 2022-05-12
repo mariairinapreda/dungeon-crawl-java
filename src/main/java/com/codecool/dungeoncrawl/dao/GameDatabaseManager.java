@@ -11,10 +11,6 @@ import java.sql.SQLException;
 public class GameDatabaseManager {
     private GameStateDao gameStateDao;
 
-    public PlayerDao getPlayerDao() {
-        return playerDao;
-    }
-
     private PlayerDao playerDao;
 
     public GameStateDao getGameStateDao() {

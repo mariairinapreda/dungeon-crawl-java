@@ -82,7 +82,7 @@ public class GameStateDaoJdbc implements GameStateDao {
     @Override
     public List<GameState> getAll() {
         try (Connection conn = dataSource.getConnection()) {
-            String sql = "SELECT id, current_map, saved_at, player_id, name ,actual_map FROM game_state";
+            String sql = "SELECT id, current_map, saved_at, player_id ,actual_map, name FROM game_state";
             ResultSet resultSet = conn.createStatement().executeQuery(sql);
             List<GameState> result = new ArrayList<>();
             while(resultSet.next()) {

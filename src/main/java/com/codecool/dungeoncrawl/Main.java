@@ -163,7 +163,7 @@ public class Main extends Application {
         menuBar.getMenus().add(menuFile);
         load.setOnAction(actionEvent -> loadModal());
         save.setOnAction(actionEvent -> {
-            createModal("DO YOU WANNA SAVE?");
+            createModal();
         });
         exit.setOnAction(actionEvent -> System.exit(0));
 
@@ -224,30 +224,6 @@ public class Main extends Application {
         return gameState;
     }
 
-//    public String readFRomText() {
-//        System.out.println("Input text..");
-//        Scanner input = new Scanner(System.in);
-//        String inputString = input.nextLine();
-//        try {
-//            File file = new File("src/main/java/jsonStrings/" + inputString + ".txt");
-//            Scanner fileReader = new Scanner(file);
-//            System.out.println(fileReader);
-//            List<String> textContent = new ArrayList<>();
-//            while (fileReader.hasNextLine()) {
-//                System.out.println(fileReader.nextLine());
-//                textContent.add(fileReader.nextLine());
-//            }
-//            String str = "";
-//            for(int i=0; i < textContent.size(); i++){
-//                str += textContent.get(i);
-//            }
-//            return str;
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return null;
-//    }
     public String readFromText(){
         System.out.println("Input text..");
         Scanner input = new Scanner(System.in);
@@ -307,7 +283,7 @@ public class Main extends Application {
         }
     }
 
-    public void createModal(String message) {
+    public void createModal() {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("SAVE GAME");
         dialog.getDialogPane().setContentText("TYPE SAVING NAME");
