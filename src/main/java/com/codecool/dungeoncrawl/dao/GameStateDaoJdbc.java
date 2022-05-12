@@ -11,6 +11,7 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class GameStateDaoJdbc implements GameStateDao {
     private DataSource dataSource;
@@ -25,13 +26,15 @@ public class GameStateDaoJdbc implements GameStateDao {
     }
 
     @Override
-    public void add(GameState state) {
+    public void add(GameState state, int player_id) {
         try (Connection conn = dataSource.getConnection()) {
-            String sql = "INSERT INTO game_state (current_map, saved_at, player_id) VALUES ( ?, ?, ?)";
+            String sql = "INSERT INTO game_state (current_map, saved_at, player_id, name, actual_map) VALUES ( ?, ?, ?, ?, ?)";
             PreparedStatement statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, state.getCurrentMap());
             statement.setDate(2, state.getSavedAt());
-            statement.setInt(3, 1);
+            statement.setInt(3, player_id);
+            statement.setString(4, state.getName());
+            statement.setInt(5, state.getActualMap());
             statement.executeUpdate();
             ResultSet resultSet = statement.getGeneratedKeys();
             resultSet.next();
@@ -43,16 +46,19 @@ public class GameStateDaoJdbc implements GameStateDao {
 
     }
 
+
+
     @Override
-    public void update(GameState state) {
+    public void update(GameState state, int id, int player_id) {
         try (Connection conn = dataSource.getConnection()) {
-            String sql = "UPDATE game_state SET current_map = ?, saved_at = ?, player_id = ? WHERE id = ?";
+            String sql = "UPDATE game_state SET current_map = ?, saved_at = ?, player_id = ?, actual_map=? WHERE id = ?";
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setString(1, state.getCurrentMap());
             state.setSavedAt(getDateNow());
             statement.setDate(2, state.getSavedAt());
-            statement.setInt(3, state.getPlayer().getId());
-            statement.setInt(4, state.getId());
+            statement.setInt(3, player_id);
+            statement.setInt(4, state.getActualMap());
+            statement.setInt(5, id);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -63,13 +69,13 @@ public class GameStateDaoJdbc implements GameStateDao {
     @Override
     public GameState get(int id) {
         try (Connection conn = dataSource.getConnection()) {
-            String sql = "SELECT current_map, saved_at, player_id FROM game_state WHERE id = ?";
+            String sql = "SELECT current_map, saved_at, player_id, name, actual_map FROM game_state WHERE id = ?";
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
             if(!resultSet.next()) return null;
             PlayerModel player=playerDaoJdbc.get(resultSet.getInt(3));
-                    GameState state = new GameState(resultSet.getString(1), resultSet.getDate(2),player);
+                    GameState state = new GameState(resultSet.getString(1), resultSet.getDate(2),player, resultSet.getString(4), resultSet.getInt(5));
             state.setId(id);
             return state;
         } catch (SQLException e) {
@@ -80,12 +86,12 @@ public class GameStateDaoJdbc implements GameStateDao {
     @Override
     public List<GameState> getAll() {
         try (Connection conn = dataSource.getConnection()) {
-            String sql = "SELECT id, current_map, saved_at, player_id FROM game_state";
+            String sql = "SELECT id, current_map, saved_at, player_id, name ,actual_map FROM game_state";
             ResultSet resultSet = conn.createStatement().executeQuery(sql);
             List<GameState> result = new ArrayList<>();
             while(resultSet.next()) {
-                PlayerModel player=playerDaoJdbc.get(resultSet.getInt(4));
-                GameState state = new GameState(resultSet.getString(2), resultSet.getDate(3),player);
+                PlayerModel player= new PlayerDaoJdbc(dataSource).get(resultSet.getInt(4));
+                GameState state = new GameState(resultSet.getString(2), resultSet.getDate(3),player, resultSet.getString(5), resultSet.getInt(6));
                 state.setId(resultSet.getInt(1));
                 result.add(state);
             }
@@ -93,5 +99,33 @@ public class GameStateDaoJdbc implements GameStateDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public GameState get(String name) {
+        List<GameState> games=getAll();
+        for(GameState gameState: games){
+            if(gameState.getName()!=null) {
+                if (gameState.getName().equals(name)) return gameState;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public int getPlayerId(int game_id) {
+        try (Connection conn = dataSource.getConnection()) {
+            String sql = "SELECT  player_id FROM game_state WHERE id = ?";
+            PreparedStatement statement = conn.prepareStatement(sql);
+            statement.setInt(1, game_id);
+            ResultSet resultSet = statement.executeQuery();
+            if(!resultSet.next()) return -1;
+            return resultSet.getInt(1);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+
+        }
+
+
     }
 }

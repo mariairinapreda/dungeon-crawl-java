@@ -30,13 +30,14 @@ public class PlayerDaoJdbc implements PlayerDao {
             ResultSet resultSet = statement.getGeneratedKeys();
             resultSet.next();
             player.setId(resultSet.getInt(1));
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void update(PlayerModel player) {
+    public void update(PlayerModel player, int id) {
 
         try (Connection conn = dataSource.getConnection()) {
             String sql = "UPDATE player SET player_name = ?, hp = ?, x = ?, y = ?, strength = ?,key =? WHERE id = ?";
@@ -47,12 +48,14 @@ public class PlayerDaoJdbc implements PlayerDao {
             statement.setInt(4, player.getY());
             statement.setInt(5, player.getStrength());
             statement.setBoolean(6, player.isKey());
-            statement.setInt(7, player.getId());
+            statement.setInt(7, id);
             statement.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
+
 
     @Override
     public PlayerModel get(int id) {
@@ -87,6 +90,12 @@ public class PlayerDaoJdbc implements PlayerDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public int getLastPerson() {
+        List<PlayerModel> players=getAll();
+        return players.get(players.size()-1).getId();
     }
 
     public List<String> getGameNames(int player_id){

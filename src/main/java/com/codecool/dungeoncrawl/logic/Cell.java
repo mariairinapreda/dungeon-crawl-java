@@ -16,6 +16,14 @@ public class Cell implements Drawable {
         this.type = type;
     }
 
+    public void setWorldX(int worldX) {
+        this.worldX = worldX;
+    }
+
+    public void setWorldY(int worldY) {
+        this.worldY = worldY;
+    }
+
     public CellType getType() {
         return type;
     }
