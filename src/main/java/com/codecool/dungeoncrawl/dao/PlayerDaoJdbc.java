@@ -30,7 +30,6 @@ public class PlayerDaoJdbc implements PlayerDao {
             ResultSet resultSet = statement.getGeneratedKeys();
             resultSet.next();
             player.setId(resultSet.getInt(1));
-
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -54,8 +53,6 @@ public class PlayerDaoJdbc implements PlayerDao {
             throw new RuntimeException(e);
         }
     }
-
-
 
     @Override
     public PlayerModel get(int id) {
@@ -91,26 +88,9 @@ public class PlayerDaoJdbc implements PlayerDao {
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public int getLastPerson() {
         List<PlayerModel> players=getAll();
         return players.get(players.size()-1).getId();
     }
-
-    public List<String> getGameNames(int player_id){
-        List<String> names = new ArrayList<>();
-        try (Connection conn = dataSource.getConnection()) {
-            String sql = "SELECT id, name FROM name_game WHERE player_id=?";
-            PreparedStatement statement = conn.prepareStatement(sql);
-            statement.setInt(1, player_id);
-            ResultSet resultSet = statement.executeQuery();
-            if(!resultSet.next()) return null;
-            names.add(resultSet.getString(1));
-            return names;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }

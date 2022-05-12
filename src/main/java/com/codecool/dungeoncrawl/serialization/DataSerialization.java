@@ -17,6 +17,8 @@ public class DataSerialization implements JsonSerializer<GameState> {
         jsonObject.addProperty("player_y_position", gameState.getPlayer().getY());
         jsonObject.addProperty("player_has_key", gameState.getPlayer().isKey());
         jsonObject.addProperty("map_address", gameState.getCurrentMap());
+        jsonObject.addProperty("map_actualMap", gameState.getActualMap());
+        jsonObject.addProperty("map_name", gameState.getName());
         return jsonObject;
     }
 }

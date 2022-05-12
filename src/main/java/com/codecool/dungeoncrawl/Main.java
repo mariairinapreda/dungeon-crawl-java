@@ -9,34 +9,21 @@ import com.codecool.dungeoncrawl.model.GameState;
 import com.codecool.dungeoncrawl.model.PlayerModel;
 import com.codecool.dungeoncrawl.serialization.DataDeSerialization;
 import com.codecool.dungeoncrawl.serialization.DataSerialization;
-import com.codecool.dungeoncrawl.serialization.SaveModel;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.codecool.dungeoncrawl.model.GameState;
-import com.codecool.dungeoncrawl.model.PlayerModel;
 import com.google.gson.reflect.TypeToken;
 import javafx.application.Application;
 import javafx.geometry.Insets;
-import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Modality;
-import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.media.Media;
@@ -45,29 +32,13 @@ import javafx.scene.layout.VBox;
 
 import java.io.*;
 import java.lang.reflect.Type;
-
-import javax.swing.*;
-import java.awt.*;
-import java.io.File;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.time.LocalDate;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static javafx.scene.input.KeyCode.RECORD;
 import static javafx.scene.input.KeyCode.S;
 
 
@@ -102,6 +73,8 @@ public class Main extends Application {
     MenuItem load = new MenuItem("LOAD");
     MenuItem save = new MenuItem("SAVE");
     MenuItem exit = new MenuItem("EXIT");
+
+
     private String text;
 
     GameDatabaseManager gameDatabaseManager = setDataBase();
@@ -122,9 +95,7 @@ public class Main extends Application {
         sound();
 
         setDataBase();
-        String text = readFromText();
-        System.out.println(text);
-        deSerializeFromText(text);
+
 
 
         GridPane ui = new GridPane();
@@ -184,8 +155,6 @@ public class Main extends Application {
         borderPane.setCenter(canvas);
         borderPane.setTop(vBox);
         borderPane.setRight(ui);
-//          createItemsForMenu();
-
         menuFile.getItems().addAll(load, save, exit);
         menuFile.setStyle("-fx-background-color: transparent;");
 
@@ -197,21 +166,20 @@ public class Main extends Application {
             createModal("DO YOU WANNA SAVE?");
         });
         exit.setOnAction(actionEvent -> System.exit(0));
+
+
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
-//        primaryStage.initModality(Modality.APPLICATION_MODAL);
-//        primaryStage.setTitle("Swing in JavaFX");
-//        primaryStage.setScene(new Scene(borderPane, 250, 150));
-//        primaryStage.show();
+
 
 
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
+
+
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
     }
-
-
     public void loadModal() {
         Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
@@ -232,6 +200,19 @@ public class Main extends Application {
         window.showAndWait();
 
     }
+    public void loadGame(String name) {
+        GameState gameState = gameStateDao.get(name);
+        int id = gameDatabaseManager.getGameStateDao().getPlayerId(gameState.getId());
+        PlayerModel player = gameDatabaseManager.getPlayerDao().get(id);
+        String file;
+        if (gameState.getActualMap() == 1) file = "/mapthis.txt";
+        else if (gameState.getActualMap() == 2) file = "/mapthis2.txt";
+        else {
+            file = "/mapthis3.txt";
+        }
+        System.out.println(gameState.getActualMap());
+        loading(file, player, gameState);
+    }
 
     public GameState deSerializeFromText(String text) {
         Type gameStateType = new TypeToken<GameState>() {
@@ -243,8 +224,7 @@ public class Main extends Application {
         return gameState;
     }
 
-
-    //    public String readFRomText() {
+//    public String readFRomText() {
 //        System.out.println("Input text..");
 //        Scanner input = new Scanner(System.in);
 //        String inputString = input.nextLine();
@@ -268,39 +248,29 @@ public class Main extends Application {
 //
 //        return null;
 //    }
-    public String readFromText() {
+    public String readFromText(){
         System.out.println("Input text..");
         Scanner input = new Scanner(System.in);
         String inputString = input.nextLine();
-        Path filePath = Path.of("src/main/java/jsonStrings/" + inputString + ".txt");
+        Path filePath = Path.of("src/main/java/jsonStrings/"+ inputString + ".txt");
         StringBuilder contentBuilder = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new FileReader(String.valueOf(filePath)))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(String.valueOf(filePath))))
+        {
 
             String sCurrentLine;
-            while ((sCurrentLine = br.readLine()) != null) {
+            while ((sCurrentLine = br.readLine()) != null)
+            {
                 contentBuilder.append(sCurrentLine).append("\n");
             }
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
         }
 
         return contentBuilder.toString();
     }
 
-
-    public void loadGame(String name) {
-        GameState gameState = gameStateDao.get(name);
-        int id = gameDatabaseManager.getGameStateDao().getPlayerId(gameState.getId());
-        PlayerModel player = gameDatabaseManager.getPlayerDao().get(id);
-        String file;
-        if (gameState.getActualMap() == 1) file = "/mapthis.txt";
-        else if (gameState.getActualMap() == 2) file = "/mapthis2.txt";
-        else {
-            file = "/mapthis3.txt";
-        }
-        System.out.println(gameState.getActualMap());
-        loading(file, player, gameState);
-    }
 
     public void loading(String file, PlayerModel player, GameState gamestate) {
         map = MapLoader.loadMap(file);
@@ -310,6 +280,50 @@ public class Main extends Application {
         map.getPlayer().setStrength(player.getStrength());
         map.getPlayer().setHasKey(player.isKey());
     }
+
+    public boolean isNameUsed(String name) {
+        List<GameState> names = gameStateDao.getAll();
+        for (GameState gamestate : names) {
+            if (gamestate.getName() != null) {
+                if (gamestate.getName().equals(name)) return true;
+            }
+        }
+        return false;
+    }
+    public void createSecondModal(String name, int id) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("OVERWRITE?");
+        dialog.getDialogPane().setContentText("Would you like to overwrite the already existing state? YES/NO");
+        Optional<String> result = dialog.showAndWait();
+        TextField input = dialog.getEditor();
+        if (result.get().equals("YES")) {
+            PlayerModel playermodal = new PlayerModel(map.getPlayer().getName(),
+                    map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
+                    map.getPlayer().isHasKey());
+            gameDatabaseManager.getPlayerDao().update(playermodal, id);
+            GameState currentState = new GameState(map.toString(), new Date(System.currentTimeMillis()), playermodal,  map.getActualMap(), name);
+            GameState oldGameState = gameStateDao.get(name);
+            gameStateDao.update(currentState, oldGameState.getId(), id);
+        }
+    }
+
+    public void createModal(String message) {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("SAVE GAME");
+        dialog.getDialogPane().setContentText("TYPE SAVING NAME");
+        Optional<String> result = dialog.showAndWait();
+        TextField input = dialog.getEditor();
+        PlayerModel playermodal = new PlayerModel(map.getPlayer().getName(),
+                map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
+                map.getPlayer().isHasKey());
+        int id = gameDatabaseManager.getPlayerDao().getLastPerson();
+        if (!isNameUsed(result.get())) {
+            GameState currentState = new GameState(map.toString(), new Date(System.currentTimeMillis()), playermodal, map.getActualMap(), result.get());
+            gameDatabaseManager.getPlayerDao().add(playermodal);
+            gameStateDao.add(currentState, id);
+        } else createSecondModal(result.get(), id);
+    }
+
 
     public void moveToward() {
         int leftDist = map.getGhost().getX() - map.getPlayer().getX();
@@ -353,53 +367,8 @@ public class Main extends Application {
         mediaPlayer.play();
     }
 
-    public boolean isNameUsed(String name) {
-        List<GameState> names = gameStateDao.getAll();
-        for (GameState gamestate : names) {
-            if (gamestate.getName() != null) {
-                if (gamestate.getName().equals(name)) return true;
-            }
-        }
-        return false;
-    }
-
-
-    public void createSecondModal(String name, int id) {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("OVERWRITE?");
-        dialog.getDialogPane().setContentText("Would you like to overwrite the already existing state? YES/NO");
-        Optional<String> result = dialog.showAndWait();
-        TextField input = dialog.getEditor();
-        if (result.get().equals("YES")) {
-            PlayerModel playermodal = new PlayerModel(map.getPlayer().getName(),
-                    map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
-                    map.getPlayer().isHasKey());
-            gameDatabaseManager.getPlayerDao().update(playermodal, id);
-            GameState currentState = new GameState(map.toString(), new Date(System.currentTimeMillis()), playermodal, name, map.getActualMap());
-            GameState oldGameState = gameStateDao.get(name);
-            gameStateDao.update(currentState, oldGameState.getId(), id);
-        }
-
-    }
-
-    public void createModal(String message) {
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("SAVE GAME");
-        dialog.getDialogPane().setContentText("TYPE SAVING NAME");
-        Optional<String> result = dialog.showAndWait();
-        TextField input = dialog.getEditor();
-        PlayerModel playermodal = new PlayerModel(map.getPlayer().getName(),
-                map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
-                map.getPlayer().isHasKey());
-        int id = gameDatabaseManager.getPlayerDao().getLastPerson();
-        if (!isNameUsed(result.get())) {
-            GameState currentState = new GameState(map.toString(), new Date(System.currentTimeMillis()), playermodal, result.get(), map.getActualMap());
-            gameDatabaseManager.getPlayerDao().add(playermodal);
-            gameStateDao.add(currentState, id);
-        } else createSecondModal(result.get(), id);
-    }
-
     private void onKeyPressed(KeyEvent keyEvent) {
+        System.out.println(keyEvent.getCode());
         switch (keyEvent.getCode()) {
             case UP:
                 if (map.getActualMap() == 1) moveNormal(0, -1);
@@ -456,21 +425,23 @@ public class Main extends Application {
                 break;
             case CONTROL:
                 KeyCharacterCombination combination = new KeyCharacterCombination(String.valueOf(S), KeyCombination.CONTROL_ANY);
-
-//                    Stage window = new Stage();
-//                    window.initModality(Modality.APPLICATION_MODAL);
-//                    window.setTitle("label");
-//                    window.setMinWidth(350);
-//                    window.setMinHeight(350);
-//                    Label label = new Label();
-//                    label.setText("yes");
-//                    Scene scene = new Scene(label);
-//                    window.setScene(scene);
-//                    window.showAndWait();
-
+                System.out.println(combination);
+                Stage window = new Stage();
+                window.initModality(Modality.APPLICATION_MODAL);
+                window.setTitle("label");
+                window.setMinWidth(350);
+                window.setMinHeight(350);
+                Label label = new Label();
+                label.setText("yes");
+                Scene scene = new Scene(label);
+                window.setScene(scene);
+                window.showAndWait();
+                System.out.println("Input..");
+                Scanner input = new Scanner(System.in);
+                String inputString = input.nextLine();
                 GameState currentState = new GameState(map.toString(), new Date(System.currentTimeMillis()), new PlayerModel(map.getPlayer().getName(),
                         map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
-                        map.getPlayer().isHasKey()), "", map.getActualMap());
+                        map.getPlayer().isHasKey()),map.getActualMap(), inputString);
                 Gson gson = new GsonBuilder()
                         .setPrettyPrinting()
                         .excludeFieldsWithoutExposeAnnotation()
@@ -478,21 +449,22 @@ public class Main extends Application {
                         .disableHtmlEscaping()
                         .registerTypeAdapter(GameState.class, new DataSerialization())
                         .create();
+
                 String serializedMovie = gson.toJson(currentState);
                 System.out.println(serializedMovie);
-                System.out.println("Input..");
-                Scanner input = new Scanner(System.in);
-                String inputString = input.nextLine();
+
 
                 if (isPossibleToAddNewGameStateFile(inputString, jsonFiles)) {
                     createNewFileGameState(inputString, serializedMovie);
                 } else {
                     overwriteGameStateFile(inputString, serializedMovie);
                 }
-
-
-                break;
+            case SHIFT:
+                String text = readFromText();
+                deSerializeFromText(text);
         }
+
+
         if (map.getActualMap() == 1 && map.getPlayer().standingOnDoor() && map.getPlayer().isHasKey()) {
             map = MapLoader.loadMap("/map2.txt");
             map.setActualMap(2);
@@ -504,74 +476,75 @@ public class Main extends Application {
         if (isWinner()) hasWon();
     }
 
-
-        public CopyOnWriteArrayList<String> getFilesFromDirectory () {
-            String[] pathnames;
-            File folder = new File("src/main/java/jsonStrings");
-            pathnames = folder.list();
-            for (String pathname : pathnames) {
-                System.out.println(pathname);
-            }
-            return new CopyOnWriteArrayList<>(pathnames);
-
+    public CopyOnWriteArrayList<String> getFilesFromDirectory() {
+        String[] pathnames;
+        File folder = new File("src/main/java/jsonStrings");
+        pathnames = folder.list();
+        for (String pathname : pathnames) {
+            System.out.println(pathname);
         }
+        return new CopyOnWriteArrayList<>(pathnames);
+
+    }
 
 
-        public void createNewFileGameState (String input, String content){
-            try {
-                File myObj = new File("src/main/java/jsonStrings/" + input + ".txt");
-                FileWriter file = new FileWriter(myObj);
-                file.append(content);
-                file.close();
-                System.out.println(myObj.getName());
-                System.out.println(myObj.getAbsolutePath());
-                if (myObj.createNewFile()) {
-                    System.out.println("File created: " + myObj.getName());
 
-                } else {
-                    System.out.println("File already exists.");
-                }
-            } catch (IOException e) {
-                System.out.println("An error occurred.");
-                e.printStackTrace();
+    public void createNewFileGameState(String input, String content){
+        try {
+            File myObj = new File("src/main/java/jsonStrings/"+input+".txt");
+            FileWriter file = new FileWriter(myObj);
+            file.append(content);
+            file.close();
+            System.out.println(myObj.getName());
+            System.out.println(myObj.getAbsolutePath());
+            if (myObj.createNewFile()) {
+                System.out.println("File created: " + myObj.getName());
+
+            } else {
+                System.out.println("File already exists.");
             }
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
         }
+    }
 
-        public boolean isPossibleToAddNewGameStateFile (String input, List < String > jsonFiles){
-            for (String jsonFile : jsonFiles) {
-                if (!jsonFile.equals(input) && input != null) {
-                    jsonFiles.add(input);
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public void overwriteGameStateFile (String input, String content){
-            try {
-                FileWriter f2 = new FileWriter(input, false);
-                f2.write(content);
-                f2.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
+    public boolean isPossibleToAddNewGameStateFile(String input,  List<String> jsonFiles){
+        for (String jsonFile : jsonFiles) {
+            if(!jsonFile.equals(input) && input != null) {
+                jsonFiles.add(input);
+                return true;
             }
         }
+        return false;
+    }
 
-        public void moveNormal ( int dx, int dy){
-            Cell cellTeleport = map.getPlayer().getCell().getNeighbor(dx, dy);
-            if (canTeleport(cellTeleport) != null && (Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--"))) {
+    public void overwriteGameStateFile(String input, String content){
+        try {
+            FileWriter f2 = new FileWriter(input, false);
+            f2.write(content);
+            f2.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void moveNormal(int dx,int dy){
+            Cell cellTeleport=map.getPlayer().getCell().getNeighbor(dx,dy );
+            if (canTeleport(cellTeleport) != null &&(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--"))) {
                 map.getPlayer().moveToLocation(canTeleport(cellTeleport));
             } else {
                 map.getPlayer().move(dx, dy);
             }
         }
-        public void moveTroughWalls ( int dx, int dy){
-            if (Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--")) {
-                map.getPlayer().moveWally(dx, dy);
-            }}
+        public void moveTroughWalls(int dx,int dy){
+            if(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--")){
+                map.getPlayer().moveWally(dx,dy);
+            }
+        }
 
-        public void hasWon () {
+        public void hasWon(){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("GAME INFO");
             alert.setHeaderText("Results:");
@@ -580,55 +553,54 @@ public class Main extends Application {
         }
 
 
-        private void refresh () {
 
-            context.setFill(Color.BLACK);
-            int screenX = (int) (map.getPlayer().getX() / 2 - 0.5);
-            int screenY = (int) (map.getPlayer().getY() / 2 - 0.5);
-            if (screenY > 5) {
-                screenY = screenY - (screenY - 5);
-            }
-            context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+    private void refresh() {
+        context.setFill(Color.BLACK);
+        int screenX = (int) (map.getPlayer().getX() / 2 - 0.5);
+        int screenY = (int) (map.getPlayer().getY() / 2 - 0.5);
+        if(screenY >5){
+            screenY = screenY - (screenY-5);
+        }
+        context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
-            for (int x = 0; x < map.getWidth(); x++) {
-                int relativeX = x - screenX;
-                for (int y = 0; y < map.getHeight(); y++) {
-                    int relativeY = y - screenY;
-                    Cell cell = map.getCell(x, y);
-                    if (cell.getActor() != null) {
-                        Tiles.drawTile(context, cell.getActor(), relativeX, relativeY);
-                    } else {
-                        Tiles.drawTile(context, cell, relativeX, relativeY);
-                    }
+        for (int x = 0; x < map.getWidth(); x++) {
+            int relativeX = x - screenX;
+            for (int y = 0; y < map.getHeight(); y++) {
+                int relativeY = y - screenY;
+                Cell cell = map.getCell(x, y);
+                if (cell.getActor() != null) {
+                    Tiles.drawTile(context, cell.getActor(), relativeX, relativeY);
+                } else {
+                    Tiles.drawTile(context, cell, relativeX, relativeY);
                 }
             }
-            if (map.getPlayer().isDead()) {
-                System.out.println("you lost");
-                hasLost();
-            }
-            healthLabel.setText("" + map.getPlayer().getHealth());
-            strengthLabel.setText("" + map.getPlayer().getStrength());
-            keyLabel.setText("" + map.getPlayer().isHasKey());
+        }
+        if (map.getPlayer().isDead()) {
+            System.out.println("you lost");
+            hasLost();
+        }
+        healthLabel.setText("" + map.getPlayer().getHealth());
+        strengthLabel.setText("" + map.getPlayer().getStrength());
+        keyLabel.setText("" + map.getPlayer().isHasKey());
 
-        }
-        public void hasLost () {
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("GAME INFO");
-            alert.setHeaderText("Results:");
-            alert.setContentText("YOU LOST! Congrats");
-            alert.showAndWait();
-        }
-        public Cell canTeleport (Cell cellt){
-            Cell cellTeleport = map.getTeleportPrecise(3, 18);
-            Cell toTeleport = map.getTeleportPrecise(18, 17);
+    }
+    public void hasLost(){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("GAME INFO");
+        alert.setHeaderText("Results:");
+        alert.setContentText("YOU LOST! Congrats");
+        alert.showAndWait();
+    }
+        public Cell canTeleport (Cell cellt) {
+            Cell cellTeleport=map.getTeleportPrecise(3,18);
+            Cell toTeleport=map.getTeleportPrecise(18,17);
             if (cellt == cellTeleport)
                 return toTeleport;
             else return null;
         }
 
-        public boolean isWinner () {
+        public boolean isWinner(){
             return map.getMonster() == null && map.getGhost() == null && map.getActualMap() == 3 && map.getSkeleton() == null;
         }
 
-
-}
+    }

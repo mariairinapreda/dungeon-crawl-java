@@ -5,10 +5,10 @@ import com.codecool.dungeoncrawl.model.GameState;
 import java.util.List;
 
 public interface GameStateDao {
-    void add(GameState state, int player_id);
-    void update(GameState state, int id, int player_id);
+    void add(GameState state, int playerId);
+    void update(GameState state, int id, int playerId);
     GameState get(int id);
-    List<GameState> getAll();
     GameState get(String name);
+    List<GameState> getAll();
     int getPlayerId(int game_id);
 }

@@ -1,6 +1,4 @@
 package com.codecool.dungeoncrawl.dao;
-
-import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.model.GameState;
 import com.codecool.dungeoncrawl.model.PlayerModel;
 
@@ -11,7 +9,6 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class GameStateDaoJdbc implements GameStateDao {
     private DataSource dataSource;
@@ -22,7 +19,9 @@ public class GameStateDaoJdbc implements GameStateDao {
         this.player=player;
     }
     public java.sql.Date getDateNow(){
-        return new java.sql.Date(System.currentTimeMillis());
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+        Date date = new Date();
+        return java.sql.Date.valueOf(dateFormat.format(date));
     }
 
     @Override
@@ -43,10 +42,7 @@ public class GameStateDaoJdbc implements GameStateDao {
 
             throw new RuntimeException(e);
         }
-
     }
-
-
 
     @Override
     public void update(GameState state, int id, int player_id) {
@@ -75,7 +71,7 @@ public class GameStateDaoJdbc implements GameStateDao {
             ResultSet resultSet = statement.executeQuery();
             if(!resultSet.next()) return null;
             PlayerModel player=playerDaoJdbc.get(resultSet.getInt(3));
-                    GameState state = new GameState(resultSet.getString(1), resultSet.getDate(2),player, resultSet.getString(4), resultSet.getInt(5));
+            GameState state = new GameState(resultSet.getString(1), resultSet.getDate(2),player, resultSet.getInt(4), resultSet.getString(5));
             state.setId(id);
             return state;
         } catch (SQLException e) {
@@ -91,7 +87,7 @@ public class GameStateDaoJdbc implements GameStateDao {
             List<GameState> result = new ArrayList<>();
             while(resultSet.next()) {
                 PlayerModel player= new PlayerDaoJdbc(dataSource).get(resultSet.getInt(4));
-                GameState state = new GameState(resultSet.getString(2), resultSet.getDate(3),player, resultSet.getString(5), resultSet.getInt(6));
+                GameState state = new GameState(resultSet.getString(2), resultSet.getDate(3),player, resultSet.getInt(5), resultSet.getString(6));
                 state.setId(resultSet.getInt(1));
                 result.add(state);
             }
@@ -100,7 +96,6 @@ public class GameStateDaoJdbc implements GameStateDao {
             throw new RuntimeException(e);
         }
     }
-
     @Override
     public GameState get(String name) {
         List<GameState> games=getAll();
@@ -111,7 +106,6 @@ public class GameStateDaoJdbc implements GameStateDao {
         }
         return null;
     }
-
     @Override
     public int getPlayerId(int game_id) {
         try (Connection conn = dataSource.getConnection()) {
