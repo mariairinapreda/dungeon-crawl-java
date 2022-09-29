@@ -3,7 +3,10 @@ package com.codecool.dungeoncrawl.logic;
 import com.codecool.dungeoncrawl.logic.actors.*;
 import com.codecool.dungeoncrawl.logic.actors.Monster;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class GameMap {
     private int worldX;
@@ -16,16 +19,48 @@ public class GameMap {
     private Cell[][] cells;
 
     private Player player;
-    private Monster monster;
+    private List<Monster> monsters=new ArrayList<>();
     private Teleport teleport;
-    private Skeleton skeleton;
+    private List<Skeleton> skeletons=new ArrayList<>();
     public Ghost ghost;
 
-    public Skeleton getSkeleton() {
-        return skeleton;
+    public List<Skeleton> getSkeleton() {
+        return skeletons;
     }
 
 
+    public void addMonsters(Monster monster){
+        monsters.add(monster);
+    }
+    public void killMonsters(){
+        monsters.removeIf(this::checkIfMonstersAreDead);
+    }
+
+    public Optional<Monster> getMonsterByPosition(int x, int y){
+        return monsters.stream().filter(monster -> monster.getX()==x && monster.getY()==y).findFirst();
+    }
+
+    public Boolean checkIfMonstersAreDead(Monster monster){
+        return monster.getDead();
+    }
+    public void addSkeletons(Skeleton skeleton){
+        skeletons.add(skeleton);
+    }
+    public void killSkeletons(){
+        skeletons.removeIf(this::checkIfSkeletonsAreDead);
+    }
+    public Optional<Skeleton> getSkeletonByPosition(int x, int y){
+        return skeletons.stream().filter(skeleton -> skeleton.getX()==x && skeleton.getY()==y).findFirst();
+    }
+
+    public void makeTheMonstersMove(){
+        for (Monster monster : monsters) {
+            monster.move();
+        }
+    }
+    public Boolean checkIfSkeletonsAreDead(Skeleton skeleton){
+        return skeleton.getDead();
+    }
 
     public Cell getTeleportPrecise(int x,int y) {
         if(Objects.equals(getCell(x, y).getTileName(), "teleport"))
@@ -48,8 +83,8 @@ public class GameMap {
 
 
 
-    public void setMonster(Monster monster) {
-        this.monster = monster;
+    public void setMonster(List<Monster> monsters) {
+        this.monsters = monsters;
     }
 
 
@@ -86,8 +121,8 @@ public class GameMap {
     public Player getPlayer() {
         return player;
     }
-    public Monster getMonster(){
-        return monster;
+    public List<Monster> getMonster(){
+        return monsters;
     }
 
 
