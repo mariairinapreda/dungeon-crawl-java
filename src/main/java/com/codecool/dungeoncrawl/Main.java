@@ -5,6 +5,7 @@ import com.codecool.dungeoncrawl.dao.GameStateDao;
 import com.codecool.dungeoncrawl.logic.*;
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.codecool.dungeoncrawl.logic.actors.Skeleton;
 import com.codecool.dungeoncrawl.model.GameState;
 import com.codecool.dungeoncrawl.model.PlayerModel;
 import com.codecool.dungeoncrawl.serialization.DataDeSerialization;
@@ -62,14 +63,14 @@ public class Main extends Application {
     Label healthLabel = new Label();
     Label strengthLabel = new Label();
     Label keyLabel = new Label();
-    Button button = new Button("Accept");
+    Button button = new Button("Pick up object");
     Label userName = new Label("Cheat:");
     TextField userTextField = new TextField();
-    Button cheatCode = new Button("OK");
+    Button cheatCode = new Button("SUBMIT");
     MediaPlayer mediaPlayer;
     MenuBar menuBar = new MenuBar();
     VBox vBox = new VBox(menuBar);
-    Menu menuFile = new Menu("Load :)");
+    Menu menuFile = new Menu("Load and Save menu :)");
     MenuItem load = new MenuItem("LOAD");
     MenuItem save = new MenuItem("SAVE");
     MenuItem exit = new MenuItem("EXIT");
@@ -144,7 +145,7 @@ public class Main extends Application {
             if (map.getPlayer().getCell() ==
                     ((Objects.equals(map.getCell(x, y).getTileName(), "mace") ? map.getCell(x, y) : ""))) {
                 map.getCell(x, y).setType(CellType.FLOOR);
-                int mace = 1;
+                int mace = 3;
                 map.getPlayer().setStrength(map.getPlayer().getStrength() + mace);
             }
 
@@ -210,7 +211,6 @@ public class Main extends Application {
         else {
             file = "/mapthis3.txt";
         }
-        System.out.println(gameState.getActualMap());
         loading(file, player, gameState);
     }
 
@@ -344,16 +344,17 @@ public class Main extends Application {
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
-        System.out.println(keyEvent.getCode());
         switch (keyEvent.getCode()) {
             case UP:
                 if (map.getActualMap() == 1) moveNormal(0, -1);
                 else if (map.getActualMap() == 3) moveTroughWalls(0, -1);
                 else map.getPlayer().move(0, -1);
+                int coordinateX=map.getPlayer().getX();
+                int coordinateY=map.getPlayer().getY();
                 if (map.getGhost() != null && map.getGhost().getHealth() > 0) moveToward();
                 else map.setGhost(null);
-                if (map.getMonster() != null && map.getMonster().getHealth() > 0) map.getMonster().move();
-                else map.setMonster(null);
+                if(map.getMonsterByPosition(coordinateX, coordinateY-1).isPresent() && map.getMonsterByPosition(coordinateX, coordinateY-1).get().getHealth() <= 0) map.getMonsterByPosition(coordinateX, coordinateY-1).get().setDead(true);
+                if (map.getSkeletonByPosition(coordinateX, coordinateY-1).isPresent() && map.getSkeletonByPosition(coordinateX, coordinateY-1).get().getHealth() <= 0)map.getSkeletonByPosition(coordinateX, coordinateY-1).get().setDead(true);
                 refresh();
                 if (mediaPlayer.isMute()) {
                     sound();
@@ -363,11 +364,12 @@ public class Main extends Application {
                 if (map.getActualMap() == 1) moveNormal(0, 1);
                 else if (map.getActualMap() == 3) moveTroughWalls(0, 1);
                 else map.getPlayer().move(0, 1);
+                int playerCoordinateX=map.getPlayer().getX();
+                int playerCoordinateY=map.getPlayer().getY();
                 if (map.getGhost() != null && map.getGhost().getHealth() > 0) moveToward();
                 else map.setGhost(null);
-                if (map.getMonster() != null && map.getMonster().getHealth() > 0) map.getMonster().move();
-                if (map.getMonster() != null && map.getMonster().getHealth() > 0) map.getMonster().move();
-                else map.setMonster(null);
+                if(map.getMonsterByPosition(playerCoordinateX, playerCoordinateY+1).isPresent() && map.getMonsterByPosition(playerCoordinateX, playerCoordinateY+1).get().getHealth() <= 0) map.getMonsterByPosition(playerCoordinateX, playerCoordinateY+1).get().setDead(true);
+                if (map.getSkeletonByPosition(playerCoordinateX, playerCoordinateY+1).isPresent() && map.getSkeletonByPosition(playerCoordinateX, playerCoordinateY+1).get().getHealth() <= 0)map.getSkeletonByPosition(playerCoordinateX, playerCoordinateY+1).get().setDead(true);
                 refresh();
                 if (mediaPlayer.isMute()) {
                     sound();
@@ -377,10 +379,12 @@ public class Main extends Application {
                 if (map.getActualMap() == 1) moveNormal(-1, 0);
                 else if (map.getActualMap() == 3) moveTroughWalls(-1, 0);
                 else map.getPlayer().move(-1, 0);
+                int xCoord=map.getPlayer().getX();
+                int yCoord=map.getPlayer().getY();
                 if (map.getGhost() != null && map.getGhost().getHealth() > 0) moveToward();
                 else map.setGhost(null);
-                if (map.getMonster() != null && map.getMonster().getHealth() > 0) map.getMonster().move();
-                else map.setMonster(null);
+                if(map.getMonsterByPosition(xCoord-1, yCoord).isPresent() && map.getMonsterByPosition(xCoord-1, yCoord).get().getHealth() <= 0) map.getMonsterByPosition(xCoord-1, yCoord).get().setDead(true);
+                if (map.getSkeletonByPosition(xCoord-1, yCoord).isPresent() && map.getSkeletonByPosition(xCoord-1,yCoord).get().getHealth() <= 0)map.getSkeletonByPosition(xCoord-1,yCoord).get().setDead(true);
                 refresh();
                 if (mediaPlayer.isMute()) {
                     sound();
@@ -392,8 +396,8 @@ public class Main extends Application {
                 else map.getPlayer().move(1, 0);
                 if (map.getGhost() != null && map.getGhost().getHealth() > 0) moveToward();
                 else map.setGhost(null);
-                if (map.getMonster() != null && map.getMonster().getHealth() > 0) map.getMonster().move();
-                else map.setMonster(null);
+                if(map.getMonsterByPosition(map.getPlayer().getX()+1, map.getPlayer().getY()).isPresent() && map.getMonsterByPosition(map.getPlayer().getX()+1, map.getPlayer().getY()).get().getHealth() <= 0) map.getMonsterByPosition(map.getPlayer().getX()+1, map.getPlayer().getY()).get().setDead(true);
+                if (map.getSkeletonByPosition(map.getPlayer().getX()+1, map.getPlayer().getY()).isPresent() && map.getSkeletonByPosition(map.getPlayer().getX()+1, map.getPlayer().getY()).get().getHealth() <= 0)map.getSkeletonByPosition(map.getPlayer().getX()+1, map.getPlayer().getY()).get().setDead(true);
                 refresh();
                 if (mediaPlayer.isMute()) {
                     sound();
@@ -401,7 +405,6 @@ public class Main extends Application {
                 break;
             case CONTROL:
                 KeyCharacterCombination combination = new KeyCharacterCombination(String.valueOf(S), KeyCombination.CONTROL_ANY);
-                System.out.println(combination);
                 Stage window = new Stage();
                 window.initModality(Modality.APPLICATION_MODAL);
                 window.setTitle("label");
@@ -412,7 +415,6 @@ public class Main extends Application {
                 Scene scene = new Scene(label);
                 window.setScene(scene);
                 window.showAndWait();
-                System.out.println("Input..");
                 Scanner input = new Scanner(System.in);
                 String inputString = input.nextLine();
                 GameState currentState = new GameState(map.toString(), new Date(System.currentTimeMillis()), new PlayerModel(map.getPlayer().getName(),
@@ -449,7 +451,6 @@ public class Main extends Application {
             map = MapLoader.loadMap("/map3.txt");
             map.setActualMap(3);
         }
-        if (isWinner()) hasWon();
     }
 
     public CopyOnWriteArrayList<String> getFilesFromDirectory() {
@@ -552,9 +553,11 @@ public class Main extends Application {
             }
         }
         if (map.getPlayer().isDead()) {
-            System.out.println("you lost");
             hasLost();
         }
+        map.makeTheMonstersMove();
+        map.killSkeletons();
+        if (isWinner()) hasWon();
         healthLabel.setText("" + map.getPlayer().getHealth());
         strengthLabel.setText("" + map.getPlayer().getStrength());
         keyLabel.setText("" + map.getPlayer().isHasKey());
@@ -564,19 +567,20 @@ public class Main extends Application {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("GAME INFO");
         alert.setHeaderText("Results:");
-        alert.setContentText("YOU LOST! Congrats");
+        alert.setContentText("YOU LOST!");
         alert.showAndWait();
     }
-        public Cell canTeleport (Cell cellt) {
+        public Cell canTeleport (Cell cell) {
             Cell cellTeleport=map.getTeleportPrecise(3,18);
             Cell toTeleport=map.getTeleportPrecise(18,17);
-            if (cellt == cellTeleport)
+            if (cell == cellTeleport)
                 return toTeleport;
             else return null;
         }
 
         public boolean isWinner(){
-            return map.getMonster() == null && map.getGhost() == null && map.getActualMap() == 3 && map.getSkeleton() == null;
+        if(map.getActualMap()==3) System.out.println(map.getSkeleton().size());
+            return map.getMonster().isEmpty() && map.getGhost() == null && map.getActualMap() == 3 && map.getSkeleton().isEmpty();
         }
 
     }
