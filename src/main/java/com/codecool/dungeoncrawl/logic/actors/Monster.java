@@ -10,7 +10,16 @@ import java.util.Random;
 public class Monster extends Actor {
 
     private int health = 15;
-    private int strength = 10;
+    private int strength = 5;
+    private Boolean isDead=false;
+
+    public Boolean getDead() {
+        return isDead;
+    }
+
+    public void setDead(Boolean dead) {
+        isDead = dead;
+    }
 
     @Override
     public Cell getCell() {
