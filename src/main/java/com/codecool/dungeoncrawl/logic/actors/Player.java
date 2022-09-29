@@ -104,13 +104,19 @@ public void moveWally(int dx, int dy) {
                 cell.getActor().setHealth(cell.getActor().getHealth()-nextCell.getActor().getStrength());
             }
             nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
-            if(nextCell.getActor().getHealth() <= 0){
-                nextCell.setActor(null);
+            if(nextCell.getActor().getHealth() <= 0 && !nextCell.getActor().getTileName().equals("skeleton")){
+                    nextCell.setActor(null);
+                    nextCell.setType(CellType.FLOOR);
+                    cell.setActor(null);
+                    nextCell.setActor(this);
+                    cell = nextCell;
+        }
+            else if(nextCell.getActor().getHealth() <= 0 && nextCell.getActor().getTileName().equals("skeleton")){
                 nextCell.setType(CellType.FLOOR);
                 cell.setActor(null);
                 nextCell.setActor(this);
                 cell = nextCell;
-        }
+            }
     }
 
 
