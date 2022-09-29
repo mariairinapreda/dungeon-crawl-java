@@ -45,7 +45,7 @@ public class MapLoader {
                             break;
                         case 'E':
                             cell.setType(CellType.MONSTER);
-                            map.setMonster(new Monster(cell));
+                            map.addMonsters(new Monster(cell));
                             break;
                         case 'G':
                             cell.setType(CellType.GHOST);
@@ -64,7 +64,7 @@ public class MapLoader {
                             break;
                         case 's':
                             cell.setType(CellType.SKELETON);
-                            new Skeleton(cell);
+                            map.addSkeletons(new Skeleton(cell));
                             break;
                         case '@':
                             cell.setType(CellType.FLOOR);
