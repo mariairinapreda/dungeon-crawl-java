@@ -4,16 +4,9 @@ import com.codecool.dungeoncrawl.logic.Cell;
 
 public class Skeleton extends Actor {
     private int health=3;
-    private int strength=0;
-    private Boolean isDead=false;
+    private int strength=1;
 
-    public Boolean getDead() {
-        return isDead;
-    }
 
-    public void setDead(Boolean dead) {
-        isDead = dead;
-    }
 
     @Override
     public int getHealth() {
