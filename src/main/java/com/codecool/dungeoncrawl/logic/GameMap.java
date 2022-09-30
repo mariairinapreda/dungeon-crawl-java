@@ -55,7 +55,7 @@ public class GameMap {
 
     public void makeTheMonstersMove(){
         for (Monster monster : monsters) {
-            monster.move();
+            monster.move(actualMap);
         }
     }
     public Boolean checkIfSkeletonsAreDead(Skeleton skeleton){
