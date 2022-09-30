@@ -9,7 +9,7 @@ import java.util.Objects;
 public class Player extends Actor {
 
     private int health = 20;
-    private int strength = 5;
+    private int strength = 20;
     private boolean hasKey;
 
 
@@ -103,15 +103,19 @@ public void moveWally(int dx, int dy) {
                 nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
                 cell.getActor().setHealth(cell.getActor().getHealth()-nextCell.getActor().getStrength());
             }
-            nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
-            if(nextCell.getActor().getHealth() <= 0 && !nextCell.getActor().getTileName().equals("skeleton")){
-                    nextCell.setActor(null);
+            else if(nextCell.getActor().getHealth()<5 && nextCell.getActor().getHealth()>0){
+                nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
+            }
+            if(nextCell.getActor().getHealth() <= 0 && (!nextCell.getActor().getTileName().equals("skeleton") && !nextCell.getActor().getTileName().equals("monster"))){
+                nextCell.getActor().setDead(true);
+                nextCell.setActor(null);
                     nextCell.setType(CellType.FLOOR);
                     cell.setActor(null);
                     nextCell.setActor(this);
                     cell = nextCell;
         }
-            else if(nextCell.getActor().getHealth() <= 0 && nextCell.getActor().getTileName().equals("skeleton")){
+            else if(nextCell.getActor().getHealth() <= 0 && (nextCell.getActor().getTileName().equals("skeleton") || nextCell.getActor().getTileName().equals("monster"))){
+               nextCell.getActor().setDead(true);
                 nextCell.setType(CellType.FLOOR);
                 cell.setActor(null);
                 nextCell.setActor(this);
