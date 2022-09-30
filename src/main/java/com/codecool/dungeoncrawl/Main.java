@@ -349,12 +349,8 @@ public class Main extends Application {
                 if (map.getActualMap() == 1) moveNormal(0, -1);
                 else if (map.getActualMap() == 3) moveTroughWalls(0, -1);
                 else map.getPlayer().move(0, -1);
-                int coordinateX=map.getPlayer().getX();
-                int coordinateY=map.getPlayer().getY();
                 if (map.getGhost() != null && map.getGhost().getHealth() > 0) moveToward();
                 else map.setGhost(null);
-                if(map.getMonsterByPosition(coordinateX, coordinateY-1).isPresent() && map.getMonsterByPosition(coordinateX, coordinateY-1).get().getHealth() <= 0) map.getMonsterByPosition(coordinateX, coordinateY-1).get().setDead(true);
-                if (map.getSkeletonByPosition(coordinateX, coordinateY-1).isPresent() && map.getSkeletonByPosition(coordinateX, coordinateY-1).get().getHealth() <= 0)map.getSkeletonByPosition(coordinateX, coordinateY-1).get().setDead(true);
                 refresh();
                 if (mediaPlayer.isMute()) {
                     sound();
@@ -364,12 +360,8 @@ public class Main extends Application {
                 if (map.getActualMap() == 1) moveNormal(0, 1);
                 else if (map.getActualMap() == 3) moveTroughWalls(0, 1);
                 else map.getPlayer().move(0, 1);
-                int playerCoordinateX=map.getPlayer().getX();
-                int playerCoordinateY=map.getPlayer().getY();
                 if (map.getGhost() != null && map.getGhost().getHealth() > 0) moveToward();
                 else map.setGhost(null);
-                if(map.getMonsterByPosition(playerCoordinateX, playerCoordinateY+1).isPresent() && map.getMonsterByPosition(playerCoordinateX, playerCoordinateY+1).get().getHealth() <= 0) map.getMonsterByPosition(playerCoordinateX, playerCoordinateY+1).get().setDead(true);
-                if (map.getSkeletonByPosition(playerCoordinateX, playerCoordinateY+1).isPresent() && map.getSkeletonByPosition(playerCoordinateX, playerCoordinateY+1).get().getHealth() <= 0)map.getSkeletonByPosition(playerCoordinateX, playerCoordinateY+1).get().setDead(true);
                 refresh();
                 if (mediaPlayer.isMute()) {
                     sound();
@@ -379,12 +371,8 @@ public class Main extends Application {
                 if (map.getActualMap() == 1) moveNormal(-1, 0);
                 else if (map.getActualMap() == 3) moveTroughWalls(-1, 0);
                 else map.getPlayer().move(-1, 0);
-                int xCoord=map.getPlayer().getX();
-                int yCoord=map.getPlayer().getY();
                 if (map.getGhost() != null && map.getGhost().getHealth() > 0) moveToward();
                 else map.setGhost(null);
-                if(map.getMonsterByPosition(xCoord-1, yCoord).isPresent() && map.getMonsterByPosition(xCoord-1, yCoord).get().getHealth() <= 0) map.getMonsterByPosition(xCoord-1, yCoord).get().setDead(true);
-                if (map.getSkeletonByPosition(xCoord-1, yCoord).isPresent() && map.getSkeletonByPosition(xCoord-1,yCoord).get().getHealth() <= 0)map.getSkeletonByPosition(xCoord-1,yCoord).get().setDead(true);
                 refresh();
                 if (mediaPlayer.isMute()) {
                     sound();
@@ -396,8 +384,6 @@ public class Main extends Application {
                 else map.getPlayer().move(1, 0);
                 if (map.getGhost() != null && map.getGhost().getHealth() > 0) moveToward();
                 else map.setGhost(null);
-                if(map.getMonsterByPosition(map.getPlayer().getX()+1, map.getPlayer().getY()).isPresent() && map.getMonsterByPosition(map.getPlayer().getX()+1, map.getPlayer().getY()).get().getHealth() <= 0) map.getMonsterByPosition(map.getPlayer().getX()+1, map.getPlayer().getY()).get().setDead(true);
-                if (map.getSkeletonByPosition(map.getPlayer().getX()+1, map.getPlayer().getY()).isPresent() && map.getSkeletonByPosition(map.getPlayer().getX()+1, map.getPlayer().getY()).get().getHealth() <= 0)map.getSkeletonByPosition(map.getPlayer().getX()+1, map.getPlayer().getY()).get().setDead(true);
                 refresh();
                 if (mediaPlayer.isMute()) {
                     sound();
@@ -555,6 +541,7 @@ public class Main extends Application {
         if (map.getPlayer().isDead()) {
             hasLost();
         }
+        map.killMonsters();
         map.makeTheMonstersMove();
         map.killSkeletons();
         if (isWinner()) hasWon();
