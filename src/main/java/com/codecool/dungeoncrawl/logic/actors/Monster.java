@@ -11,15 +11,7 @@ public class Monster extends Actor {
 
     private int health = 15;
     private int strength = 5;
-    private Boolean isDead=false;
 
-    public Boolean getDead() {
-        return isDead;
-    }
-
-    public void setDead(Boolean dead) {
-        isDead = dead;
-    }
 
     @Override
     public Cell getCell() {
@@ -72,7 +64,6 @@ public class Monster extends Actor {
             if (!Objects.equals(nextCell.getTileName(), "wall") &&
                     !Objects.equals(nextCell.getTileName(), "empty") &&
                     !Objects.equals(nextCell.getTileName(), "door") &&
-                    !Objects.equals(nextCell.getTileName(), "ocean") &&
                     !Objects.equals(nextCell.getTileName(), "health") &&
                     !Objects.equals(nextCell.getTileName(), "shield") &&
                     !Objects.equals(nextCell.getTileName(), "mace") &&
@@ -88,19 +79,27 @@ public class Monster extends Actor {
 
 
 
-    public void move() {
-
+    public void move(int actualMap) {
+        System.out.println(this.getHealth());
         Random destination = new Random();
         boolean move = false;
         while (!move) {
             int rand_int1 = destination.nextInt(-3, 3);
             int rand_int2 = destination.nextInt(-3, 3);
             if (canMove(rand_int1, rand_int2)) {
+                if((cell.getY()==3 || cell.getY()==4) && (actualMap==3 || actualMap==2)){
+                    move = true;
+                    cell.setActor(null);
+                    cell.setType(CellType.OCEAN);
+                    cell.getNeighbor(rand_int1, rand_int2).setActor(this);
+                    cell = cell.getNeighbor(rand_int1, rand_int2);
+                }
+                else{
                 move = true;
                 cell.setActor(null);
                 cell.setType(CellType.FLOOR);
                 cell.getNeighbor(rand_int1, rand_int2).setActor(this);
-                cell = cell.getNeighbor(rand_int1, rand_int2);
+                cell = cell.getNeighbor(rand_int1, rand_int2);}
             }
         }
     }
