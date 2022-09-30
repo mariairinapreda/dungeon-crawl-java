@@ -9,6 +9,7 @@ public abstract class Actor implements Drawable {
     protected Cell cell;
     private int strength;
     private int health;
+    private Boolean isDead=false;
 
     public Actor(Cell cell) {
         this.cell = cell;
@@ -16,6 +17,13 @@ public abstract class Actor implements Drawable {
 
     }
 
+    public Boolean getDead() {
+        return isDead;
+    }
+
+    public void setDead(Boolean dead) {
+        isDead = dead;
+    }
 
     abstract void move(int dx, int dy);
 
