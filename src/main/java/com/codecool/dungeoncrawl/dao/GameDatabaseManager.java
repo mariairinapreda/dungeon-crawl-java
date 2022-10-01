@@ -17,18 +17,16 @@ public class GameDatabaseManager {
         return gameStateDao;
     }
 
-    public PlayerDao getPlayerDao(){
+    public PlayerDao getPlayerDao() {
         return playerDao;
     }
-
-
 
 
     public void setup() throws SQLException {
         DataSource dataSource = connect();
         playerDao = new PlayerDaoJdbc(dataSource);
 
-        gameStateDao=new GameStateDaoJdbc(dataSource, playerDao);
+        gameStateDao = new GameStateDaoJdbc(dataSource, playerDao);
     }
 
     public PlayerModel savePlayer(Player player) {
@@ -40,7 +38,7 @@ public class GameDatabaseManager {
 
     private DataSource connect() throws SQLException {
         PGSimpleDataSource dataSource = new PGSimpleDataSource();
-        ApplicationProperties properties=new ApplicationProperties();
+        ApplicationProperties properties = new ApplicationProperties();
         dataSource.setDatabaseName(properties.readProperty("database"));
         dataSource.setUser(properties.readProperty("user"));
         dataSource.setPassword(properties.readProperty("password"));
