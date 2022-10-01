@@ -12,8 +12,10 @@ public class Tiles {
 
     private static Image tileset = new Image("/tiles.png", 543 * 2, 543 * 2, true, false);
     private static Map<String, Tile> tileMap = new HashMap<>();
+
     public static class Tile {
         public final int x, y, w, h;
+
         Tile(int i, int j) {
             x = i * (TILE_WIDTH + 2);
             y = j * (TILE_WIDTH + 2);
@@ -32,10 +34,10 @@ public class Tiles {
         tileMap.put("shield", new Tile(5, 25));
         tileMap.put("health", new Tile(18, 28));
         tileMap.put("key", new Tile(17, 23));
-        tileMap.put("monster", new Tile(29,2));
-        tileMap.put("ghost", new Tile(22,23));
-        tileMap.put("teleport", new Tile(30,28));
-        tileMap.put("door", new Tile(29,3));
+        tileMap.put("monster", new Tile(29, 2));
+        tileMap.put("ghost", new Tile(22, 23));
+        tileMap.put("teleport", new Tile(30, 28));
+        tileMap.put("door", new Tile(29, 3));
         tileMap.put("openDoor", new Tile(4, 30));
         tileMap.put("ocean", new Tile(8, 5));
     }

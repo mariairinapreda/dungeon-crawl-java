@@ -98,7 +98,6 @@ public class Main extends Application {
         setDataBase();
 
 
-
         GridPane ui = new GridPane();
         ui.setOnMousePressed(e -> ui.requestFocus());
         ui.setPrefWidth(270);
@@ -173,7 +172,6 @@ public class Main extends Application {
         primaryStage.setScene(scene);
 
 
-
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
 
@@ -181,6 +179,7 @@ public class Main extends Application {
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
     }
+
     public void loadModal() {
         Stage window = new Stage();
         window.initModality(Modality.APPLICATION_MODAL);
@@ -201,6 +200,7 @@ public class Main extends Application {
         window.showAndWait();
 
     }
+
     public void loadGame(String name) {
         GameState gameState = gameStateDao.get(name);
         int id = gameDatabaseManager.getGameStateDao().getPlayerId(gameState.getId());
@@ -224,23 +224,19 @@ public class Main extends Application {
         return gameState;
     }
 
-    public String readFromText(){
+    public String readFromText() {
         System.out.println("Input text..");
         Scanner input = new Scanner(System.in);
         String inputString = input.nextLine();
-        Path filePath = Path.of("src/main/java/jsonStrings/"+ inputString + ".txt");
+        Path filePath = Path.of("src/main/java/jsonStrings/" + inputString + ".txt");
         StringBuilder contentBuilder = new StringBuilder();
-        try (BufferedReader br = new BufferedReader(new FileReader(String.valueOf(filePath))))
-        {
+        try (BufferedReader br = new BufferedReader(new FileReader(String.valueOf(filePath)))) {
 
             String sCurrentLine;
-            while ((sCurrentLine = br.readLine()) != null)
-            {
+            while ((sCurrentLine = br.readLine()) != null) {
                 contentBuilder.append(sCurrentLine).append("\n");
             }
-        }
-        catch (IOException e)
-        {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -266,6 +262,7 @@ public class Main extends Application {
         }
         return false;
     }
+
     public void createSecondModal(String name, int id) {
         TextInputDialog dialog = new TextInputDialog();
         dialog.setTitle("OVERWRITE?");
@@ -277,7 +274,7 @@ public class Main extends Application {
                     map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
                     map.getPlayer().isHasKey());
             gameDatabaseManager.getPlayerDao().update(playermodal, id);
-            GameState currentState = new GameState(map.toString(), new Date(System.currentTimeMillis()), playermodal,  map.getActualMap(), name);
+            GameState currentState = new GameState(map.toString(), new Date(System.currentTimeMillis()), playermodal, map.getActualMap(), name);
             GameState oldGameState = gameStateDao.get(name);
             gameStateDao.update(currentState, oldGameState.getId(), id);
         }
@@ -405,7 +402,7 @@ public class Main extends Application {
                 String inputString = input.nextLine();
                 GameState currentState = new GameState(map.toString(), new Date(System.currentTimeMillis()), new PlayerModel(map.getPlayer().getName(),
                         map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
-                        map.getPlayer().isHasKey()),map.getActualMap(), inputString);
+                        map.getPlayer().isHasKey()), map.getActualMap(), inputString);
                 Gson gson = new GsonBuilder()
                         .setPrettyPrinting()
                         .excludeFieldsWithoutExposeAnnotation()
@@ -451,10 +448,9 @@ public class Main extends Application {
     }
 
 
-
-    public void createNewFileGameState(String input, String content){
+    public void createNewFileGameState(String input, String content) {
         try {
-            File myObj = new File("src/main/java/jsonStrings/"+input+".txt");
+            File myObj = new File("src/main/java/jsonStrings/" + input + ".txt");
             FileWriter file = new FileWriter(myObj);
             file.append(content);
             file.close();
@@ -472,9 +468,9 @@ public class Main extends Application {
         }
     }
 
-    public boolean isPossibleToAddNewGameStateFile(String input,  List<String> jsonFiles){
+    public boolean isPossibleToAddNewGameStateFile(String input, List<String> jsonFiles) {
         for (String jsonFile : jsonFiles) {
-            if(!jsonFile.equals(input) && input != null) {
+            if (!jsonFile.equals(input) && input != null) {
                 jsonFiles.add(input);
                 return true;
             }
@@ -482,7 +478,7 @@ public class Main extends Application {
         return false;
     }
 
-    public void overwriteGameStateFile(String input, String content){
+    public void overwriteGameStateFile(String input, String content) {
         try {
             FileWriter f2 = new FileWriter(input, false);
             f2.write(content);
@@ -493,36 +489,38 @@ public class Main extends Application {
         }
     }
 
-    public void moveNormal(int dx,int dy){
-            Cell cellTeleport=map.getPlayer().getCell().getNeighbor(dx,dy );
-            if (canTeleport(cellTeleport) != null &&(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--"))) {
-                map.getPlayer().moveToLocation(canTeleport(cellTeleport));
-            } else {
-                map.getPlayer().move(dx, dy);
-            }
+    public void moveNormal(int dx, int dy) {
+        Cell cellTeleport = map.getPlayer().getCell().getNeighbor(dx, dy);
+        if (canTeleport(cellTeleport) != null && (Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--"))) {
+            map.getPlayer().moveToLocation(canTeleport(cellTeleport));
+        } else {
+            map.getPlayer().move(dx, dy);
         }
-        public void moveTroughWalls(int dx,int dy){
-            if(Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--")){
-                map.getPlayer().moveWally(dx,dy);
-            }
-        }
+    }
 
-        public void hasWon(){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("GAME INFO");
-            alert.setHeaderText("Results:");
-            alert.setContentText("YOU WON! Congrats");
-            alert.showAndWait();
+    public void moveTroughWalls(int dx, int dy) {
+        if (Objects.equals(text, "Maria") || Objects.equals(text, "Ioana") || Objects.equals(text, "Robert');DROP TABLE students;--")) {
+            map.getPlayer().moveWally(dx, dy);
+        } else {
+            map.getPlayer().move(dx, dy);
         }
+    }
 
+    public void hasWon() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("GAME INFO");
+        alert.setHeaderText("Results:");
+        alert.setContentText("YOU WON! Congrats");
+        alert.showAndWait();
+    }
 
 
     private void refresh() {
         context.setFill(Color.BLACK);
         int screenX = (int) (map.getPlayer().getX() / 2 - 0.5);
         int screenY = (int) (map.getPlayer().getY() / 2 - 0.5);
-        if(screenY >5){
-            screenY = screenY - (screenY-5);
+        if (screenY > 5) {
+            screenY = screenY - (screenY - 5);
         }
         context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
 
@@ -550,24 +548,25 @@ public class Main extends Application {
         keyLabel.setText("" + map.getPlayer().isHasKey());
 
     }
-    public void hasLost(){
+
+    public void hasLost() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("GAME INFO");
         alert.setHeaderText("Results:");
         alert.setContentText("YOU LOST!");
         alert.showAndWait();
     }
-        public Cell canTeleport (Cell cell) {
-            Cell cellTeleport=map.getTeleportPrecise(3,18);
-            Cell toTeleport=map.getTeleportPrecise(18,17);
-            if (cell == cellTeleport)
-                return toTeleport;
-            else return null;
-        }
 
-        public boolean isWinner(){
-        if(map.getActualMap()==3) System.out.println(map.getSkeleton().size());
-            return map.getMonster().isEmpty() && map.getGhost() == null && map.getActualMap() == 3 && map.getSkeleton().isEmpty();
-        }
-
+    public Cell canTeleport(Cell cell) {
+        Cell cellTeleport = map.getTeleportPrecise(3, 18);
+        Cell toTeleport = map.getTeleportPrecise(18, 17);
+        if (cell == cellTeleport)
+            return toTeleport;
+        else return null;
     }
+
+    public boolean isWinner() {
+        return map.getMonster().isEmpty() && map.getGhost() == null && map.getActualMap() == 3 && map.getSkeleton().isEmpty();
+    }
+
+}

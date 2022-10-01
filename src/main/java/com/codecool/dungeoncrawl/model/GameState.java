@@ -25,7 +25,6 @@ public class GameState extends BaseModel {
     }
 
 
-
     public int getActualMap() {
         return actualMap;
     }

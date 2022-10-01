@@ -14,8 +14,6 @@ public class PlayerModel extends BaseModel {
     private List<String> gameNames;
 
 
-
-
     public int getStrength() {
         return strength;
     }
@@ -33,24 +31,23 @@ public class PlayerModel extends BaseModel {
     }
 
 
-
     public PlayerModel(String playerName, int hp, int x, int y, int strength, boolean key) {
         this.playerName = playerName;
         this.hp = hp;
         this.x = x;
         this.y = y;
-        this.strength=strength;
-        this.key=key;
+        this.strength = strength;
+        this.key = key;
 
     }
 
     public PlayerModel(Player player) {
         this.playerName = player.getName();
+        this.hp = player.getHealth();
         this.x = player.getX();
         this.y = player.getY();
-        this.hp = player.getHealth();
-        this.strength= player.getStrength();
-        this.key= player.isHasKey();
+        this.strength = player.getStrength();
+        this.key = player.isHasKey();
     }
 
 
