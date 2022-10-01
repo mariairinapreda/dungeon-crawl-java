@@ -16,7 +16,7 @@ public class DataDeSerialization implements JsonDeserializer<GameState> {
     public GameState deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject jsonObject = jsonElement.getAsJsonObject();
 
-        JsonElement jsonPlayerName= jsonObject.get("player_name");
+        JsonElement jsonPlayerName = jsonObject.get("player_name");
         JsonElement jsonPlayerHealth = jsonObject.get("player_health");
         JsonElement jsonPlayerStrength = jsonObject.get("player_strength");
         JsonElement jsonPlayerX = jsonObject.get("player_x_position");
