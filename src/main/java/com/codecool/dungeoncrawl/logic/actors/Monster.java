@@ -59,7 +59,7 @@ public class Monster extends Actor {
     }
 
     public boolean canMove(int dx, int dy) {
-        try{
+        try {
             Cell nextCell = cell.getNeighbor(dx, dy);
             if (!Objects.equals(nextCell.getTileName(), "wall") &&
                     !Objects.equals(nextCell.getTileName(), "empty") &&
@@ -72,34 +72,32 @@ public class Monster extends Actor {
                     nextCell.getActor() == null) {
                 return true;
             } else return false;
-        }catch (IndexOutOfBoundsException e){
-                return false;
-            }
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        }
     }
 
 
-
     public void move(int actualMap) {
-        System.out.println(this.getHealth());
         Random destination = new Random();
         boolean move = false;
         while (!move) {
             int rand_int1 = destination.nextInt(-3, 3);
             int rand_int2 = destination.nextInt(-3, 3);
             if (canMove(rand_int1, rand_int2)) {
-                if((cell.getY()==3 || cell.getY()==4) && (actualMap==3 || actualMap==2)){
+                if ((cell.getY() == 3 || cell.getY() == 4) && (actualMap == 3 || actualMap == 2)) {
                     move = true;
                     cell.setActor(null);
                     cell.setType(CellType.OCEAN);
                     cell.getNeighbor(rand_int1, rand_int2).setActor(this);
                     cell = cell.getNeighbor(rand_int1, rand_int2);
+                } else {
+                    move = true;
+                    cell.setActor(null);
+                    cell.setType(CellType.FLOOR);
+                    cell.getNeighbor(rand_int1, rand_int2).setActor(this);
+                    cell = cell.getNeighbor(rand_int1, rand_int2);
                 }
-                else{
-                move = true;
-                cell.setActor(null);
-                cell.setType(CellType.FLOOR);
-                cell.getNeighbor(rand_int1, rand_int2).setActor(this);
-                cell = cell.getNeighbor(rand_int1, rand_int2);}
             }
         }
     }

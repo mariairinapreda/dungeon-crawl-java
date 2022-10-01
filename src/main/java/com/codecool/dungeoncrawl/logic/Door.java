@@ -1,10 +1,10 @@
 package com.codecool.dungeoncrawl.logic;
 
-public class Door implements Drawable{
+public class Door implements Drawable {
     private Cell cell;
     private boolean isOpen = false;
 
-    public Door(Cell cell){
+    public Door(Cell cell) {
         this.cell = cell;
         cell.setDoor(this);
     }

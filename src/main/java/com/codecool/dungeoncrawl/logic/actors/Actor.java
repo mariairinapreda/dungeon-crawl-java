@@ -9,7 +9,7 @@ public abstract class Actor implements Drawable {
     protected Cell cell;
     private int strength;
     private int health;
-    private Boolean isDead=false;
+    private Boolean isDead = false;
 
     public Actor(Cell cell) {
         this.cell = cell;
@@ -35,9 +35,11 @@ public abstract class Actor implements Drawable {
     public void setHealth(int health) {
         this.health = health;
     }
+
     public int getHealth() {
         return health;
     }
+
     public int getStrength() {
         return strength;
     }

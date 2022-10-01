@@ -13,13 +13,11 @@ public class Player extends Actor {
     private boolean hasKey;
 
 
-
-
     public Player(Cell cell) {
         super(cell);
     }
 
-    
+
     public String getTileName() {
         return "player";
     }
@@ -32,6 +30,7 @@ public class Player extends Actor {
     public void setHasKey(boolean hasKey) {
         this.hasKey = hasKey;
     }
+
     public int getStrength() {
         return strength;
     }
@@ -51,84 +50,77 @@ public class Player extends Actor {
     }
 
 
-
-    public boolean standingOnDoor(){
+    public boolean standingOnDoor() {
         return cell.getType() == CellType.DOOR;
     }
 
     public void move(int dx, int dy) {
-            Cell nextCell = cell.getNeighbor(dx, dy);
-            if(!Objects.equals(nextCell.getTileName(), "wall") &&
-                    !Objects.equals(nextCell.getTileName(), "empty") &&
-                    nextCell.getActor() == null ){
-                cell.setActor(null);
-                nextCell.setActor(this);
-                cell = nextCell;}
-            else {
-                movementConditions(nextCell);
-            }
+        Cell nextCell = cell.getNeighbor(dx, dy);
+        if (!Objects.equals(nextCell.getTileName(), "wall") &&
+                !Objects.equals(nextCell.getTileName(), "empty") &&
+                nextCell.getActor() == null) {
+            cell.setActor(null);
+            nextCell.setActor(this);
+            cell = nextCell;
+        } else {
+            movementConditions(nextCell);
+        }
     }
 
     private void movementConditions(Cell nextCell) {
-        if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "skeleton")){
+        if (nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "skeleton")) {
             attack(nextCell);
-        }
-        else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "monster")){
+        } else if (nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "monster")) {
             attack(nextCell);
-        }
-        else if(nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "ghost")){
+        } else if (nextCell.getActor() != null && Objects.equals(nextCell.getActor().getTileName(), "ghost")) {
             attack(nextCell);
         }
     }
 
-    public void moveToLocation(Cell nextCell){
-        Cell newCell=nextCell.getNeighbor(1,1);
+    public void moveToLocation(Cell nextCell) {
+        Cell newCell = nextCell.getNeighbor(1, 1);
         cell.setActor(null);
         newCell.setActor(this);
         cell = newCell;
     }
-public void moveWally(int dx, int dy) {
-    Cell nextCell = cell.getNeighbor(dx, dy);
-    if (!Objects.equals(nextCell.getTileName(), "empty") &&
-            nextCell.getActor() == null) {
-        cell.setActor(null);
-        nextCell.setActor(this);
-        cell = nextCell;}
-    else movementConditions(nextCell);
-}
 
-
-    private void attack(Cell nextCell) {
-            if(nextCell.getActor().getHealth() > 5){
-                nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
-                cell.getActor().setHealth(cell.getActor().getHealth()-nextCell.getActor().getStrength());
-            }
-            else if(nextCell.getActor().getHealth()<5 && nextCell.getActor().getHealth()>0){
-                nextCell.getActor().setHealth(nextCell.getActor().getHealth()-cell.getActor().getStrength());
-            }
-            if(nextCell.getActor().getHealth() <= 0 && (!nextCell.getActor().getTileName().equals("skeleton") && !nextCell.getActor().getTileName().equals("monster"))){
-                nextCell.getActor().setDead(true);
-                nextCell.setActor(null);
-                    nextCell.setType(CellType.FLOOR);
-                    cell.setActor(null);
-                    nextCell.setActor(this);
-                    cell = nextCell;
-        }
-            else if(nextCell.getActor().getHealth() <= 0 && (nextCell.getActor().getTileName().equals("skeleton") || nextCell.getActor().getTileName().equals("monster"))){
-               nextCell.getActor().setDead(true);
-                nextCell.setType(CellType.FLOOR);
-                cell.setActor(null);
-                nextCell.setActor(this);
-                cell = nextCell;
-            }
+    public void moveWally(int dx, int dy) {
+        Cell nextCell = cell.getNeighbor(dx, dy);
+        if (!Objects.equals(nextCell.getTileName(), "empty") &&
+                nextCell.getActor() == null) {
+            cell.setActor(null);
+            nextCell.setActor(this);
+            cell = nextCell;
+        } else movementConditions(nextCell);
     }
 
 
+    private void attack(Cell nextCell) {
+        if (nextCell.getActor().getHealth() > 5) {
+            nextCell.getActor().setHealth(nextCell.getActor().getHealth() - cell.getActor().getStrength());
+            cell.getActor().setHealth(cell.getActor().getHealth() - nextCell.getActor().getStrength());
+        } else if (nextCell.getActor().getHealth() < 5 && nextCell.getActor().getHealth() > 0) {
+            nextCell.getActor().setHealth(nextCell.getActor().getHealth() - cell.getActor().getStrength());
+        }
+        if (nextCell.getActor().getHealth() <= 0 && (!nextCell.getActor().getTileName().equals("skeleton") && !nextCell.getActor().getTileName().equals("monster"))) {
+            nextCell.getActor().setDead(true);
+            nextCell.setActor(null);
+            nextCell.setType(CellType.FLOOR);
+            cell.setActor(null);
+            nextCell.setActor(this);
+            cell = nextCell;
+        } else if (nextCell.getActor().getHealth() <= 0 && (nextCell.getActor().getTileName().equals("skeleton") || nextCell.getActor().getTileName().equals("monster"))) {
+            nextCell.getActor().setDead(true);
+            nextCell.setType(CellType.FLOOR);
+            cell.setActor(null);
+            nextCell.setActor(this);
+            cell = nextCell;
+        }
+    }
 
 
-
-    public boolean isDead(){
-        return health<=0;
+    public boolean isDead() {
+        return health <= 0;
     }
 
     public String getName() {

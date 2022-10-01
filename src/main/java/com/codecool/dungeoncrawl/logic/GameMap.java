@@ -13,15 +13,13 @@ public class GameMap {
     private int worldY;
 
 
-
-
     private int actualMap = 1;
     private Cell[][] cells;
 
     private Player player;
-    private List<Monster> monsters=new ArrayList<>();
+    private List<Monster> monsters = new ArrayList<>();
     private Teleport teleport;
-    private List<Skeleton> skeletons=new ArrayList<>();
+    private List<Skeleton> skeletons = new ArrayList<>();
     public Ghost ghost;
 
     public List<Skeleton> getSkeleton() {
@@ -29,42 +27,47 @@ public class GameMap {
     }
 
 
-    public void addMonsters(Monster monster){
+    public void addMonsters(Monster monster) {
         monsters.add(monster);
     }
-    public void killMonsters(){
+
+    public void killMonsters() {
         monsters.removeIf(this::checkIfMonstersAreDead);
     }
 
-    public Optional<Monster> getMonsterByPosition(int x, int y){
-        return monsters.stream().filter(monster -> monster.getX()==x && monster.getY()==y).findFirst();
+    public Optional<Monster> getMonsterByPosition(int x, int y) {
+        return monsters.stream().filter(monster -> monster.getX() == x && monster.getY() == y).findFirst();
     }
 
-    public Boolean checkIfMonstersAreDead(Monster monster){
+    public Boolean checkIfMonstersAreDead(Monster monster) {
         return monster.getDead();
     }
-    public void addSkeletons(Skeleton skeleton){
+
+    public void addSkeletons(Skeleton skeleton) {
         skeletons.add(skeleton);
     }
-    public void killSkeletons(){
+
+    public void killSkeletons() {
         skeletons.removeIf(this::checkIfSkeletonsAreDead);
     }
-    public Optional<Skeleton> getSkeletonByPosition(int x, int y){
-        return skeletons.stream().filter(skeleton -> skeleton.getX()==x && skeleton.getY()==y).findFirst();
+
+    public Optional<Skeleton> getSkeletonByPosition(int x, int y) {
+        return skeletons.stream().filter(skeleton -> skeleton.getX() == x && skeleton.getY() == y).findFirst();
     }
 
-    public void makeTheMonstersMove(){
+    public void makeTheMonstersMove() {
         for (Monster monster : monsters) {
             monster.move(actualMap);
         }
     }
-    public Boolean checkIfSkeletonsAreDead(Skeleton skeleton){
+
+    public Boolean checkIfSkeletonsAreDead(Skeleton skeleton) {
         return skeleton.getDead();
     }
 
-    public Cell getTeleportPrecise(int x,int y) {
-        if(Objects.equals(getCell(x, y).getTileName(), "teleport"))
-        return getCell(x,y);
+    public Cell getTeleportPrecise(int x, int y) {
+        if (Objects.equals(getCell(x, y).getTileName(), "teleport"))
+            return getCell(x, y);
         else return null;
     }
 
@@ -82,12 +85,9 @@ public class GameMap {
     }
 
 
-
     public void setMonster(List<Monster> monsters) {
         this.monsters = monsters;
     }
-
-
 
 
     public GameMap(int width, int height, CellType defaultCellType) {
@@ -121,10 +121,10 @@ public class GameMap {
     public Player getPlayer() {
         return player;
     }
-    public List<Monster> getMonster(){
+
+    public List<Monster> getMonster() {
         return monsters;
     }
-
 
 
     public int getWidth() {

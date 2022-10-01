@@ -62,8 +62,8 @@ public class PlayerDaoJdbc implements PlayerDao {
             PreparedStatement statement = conn.prepareStatement(sql);
             statement.setInt(1, id);
             ResultSet resultSet = statement.executeQuery();
-            if(!resultSet.next()) return null;
-            PlayerModel player = new PlayerModel(resultSet.getString(1), resultSet.getInt(2), resultSet.getInt(3), resultSet.getInt(4),resultSet.getInt(5),resultSet.getBoolean(6));
+            if (!resultSet.next()) return null;
+            PlayerModel player = new PlayerModel(resultSet.getString(1), resultSet.getInt(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getInt(5), resultSet.getBoolean(6));
             player.setId(id);
             return player;
         } catch (SQLException e) {
@@ -78,8 +78,8 @@ public class PlayerDaoJdbc implements PlayerDao {
             String sql = "SELECT id, player_name, hp, x, y, strength,key FROM player";
             ResultSet resultSet = conn.createStatement().executeQuery(sql);
             List<PlayerModel> result = new ArrayList<>();
-            while(resultSet.next()) {
-                PlayerModel player = new PlayerModel(resultSet.getString(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getInt(5),resultSet.getInt(6),resultSet.getBoolean(7));
+            while (resultSet.next()) {
+                PlayerModel player = new PlayerModel(resultSet.getString(2), resultSet.getInt(3), resultSet.getInt(4), resultSet.getInt(5), resultSet.getInt(6), resultSet.getBoolean(7));
                 player.setId(resultSet.getInt(1));
                 result.add(player);
             }
@@ -88,9 +88,10 @@ public class PlayerDaoJdbc implements PlayerDao {
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public int getLastPerson() {
-        List<PlayerModel> players=getAll();
-        return players.get(players.size()-1).getId();
+        List<PlayerModel> players = getAll();
+        return players.get(players.size() - 1).getId();
     }
 }

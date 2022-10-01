@@ -3,9 +3,8 @@ package com.codecool.dungeoncrawl.logic.actors;
 import com.codecool.dungeoncrawl.logic.Cell;
 
 public class Skeleton extends Actor {
-    private int health=3;
-    private int strength=1;
-
+    private int health = 3;
+    private int strength = 1;
 
 
     @Override
