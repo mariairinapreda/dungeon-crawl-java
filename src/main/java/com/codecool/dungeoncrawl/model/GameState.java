@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
 
+
 public class GameState extends BaseModel {
     private Date savedAt;
     private String currentMap;
