@@ -206,8 +206,12 @@ public class Main extends Application {
         int id = gameDatabaseManager.getGameStateDao().getPlayerId(gameState.getId());
         PlayerModel player = gameDatabaseManager.getPlayerDao().get(id);
         String file;
-        if (gameState.getActualMap() == 1) file = "/mapthis.txt";
-        else if (gameState.getActualMap() == 2) file = "/mapthis2.txt";
+        if (gameState.getActualMap() == 1){
+            file = "/mapthis.txt";
+        }
+        else if (gameState.getActualMap() == 2) {
+            file = "/mapthis2.txt";
+        }
         else {
             file = "/mapthis3.txt";
         }
@@ -326,7 +330,6 @@ public class Main extends Application {
         return null;
     }
 
-    //TODO: loop for never-ending music
     public void sound() {
         File mediaFile = new File("src/main/resources/music.mp3");
         Media media = null;
@@ -388,38 +391,39 @@ public class Main extends Application {
                 break;
             case CONTROL:
                 KeyCharacterCombination combination = new KeyCharacterCombination(String.valueOf(S), KeyCombination.CONTROL_ANY);
-                Stage window = new Stage();
-                window.initModality(Modality.APPLICATION_MODAL);
-                window.setTitle("label");
-                window.setMinWidth(350);
-                window.setMinHeight(350);
-                Label label = new Label();
-                label.setText("yes");
-                Scene scene = new Scene(label);
-                window.setScene(scene);
-                window.showAndWait();
-                Scanner input = new Scanner(System.in);
-                String inputString = input.nextLine();
-                GameState currentState = new GameState(map.toString(), new Date(System.currentTimeMillis()), new PlayerModel(map.getPlayer().getName(),
-                        map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
-                        map.getPlayer().isHasKey()), map.getActualMap(), inputString);
-                Gson gson = new GsonBuilder()
-                        .setPrettyPrinting()
-                        .excludeFieldsWithoutExposeAnnotation()
-                        .serializeNulls()
-                        .disableHtmlEscaping()
-                        .registerTypeAdapter(GameState.class, new DataSerialization())
-                        .create();
+                ModalWindow modalWindow = new ModalWindow();
+                modalWindow.display("save game", "Do you want to save?");
+//                Stage window = new Stage();
+//                window.initModality(Modality.APPLICATION_MODAL);
+//                window.setTitle("label");
+//                window.setMinWidth(350);
+//                window.setMinHeight(350);
+//                Label label = new Label();
+//                label.setText("yes");
+//                Scene scene = new Scene(label);
+//                window.setScene(scene);
+//                window.showAndWait();
+                    String inputString = modalWindow.gameName();
+                    GameState currentState = new GameState(map.toString(), new Date(System.currentTimeMillis()), new PlayerModel(map.getPlayer().getName(),
+                            map.getPlayer().getHealth(), map.getPlayer().getX(), map.getPlayer().getY(), map.getPlayer().getStrength(),
+                            map.getPlayer().isHasKey()), map.getActualMap(), inputString);
+                    Gson gson = new GsonBuilder()
+                            .setPrettyPrinting()
+                            .excludeFieldsWithoutExposeAnnotation()
+                            .serializeNulls()
+                            .disableHtmlEscaping()
+                            .registerTypeAdapter(GameState.class, new DataSerialization())
+                            .create();
 
-                String serializedMovie = gson.toJson(currentState);
-                System.out.println(serializedMovie);
+                    String serializedMovie = gson.toJson(currentState);
 
 
-                if (isPossibleToAddNewGameStateFile(inputString, jsonFiles)) {
-                    createNewFileGameState(inputString, serializedMovie);
-                } else {
-                    overwriteGameStateFile(inputString, serializedMovie);
-                }
+                    if (isPossibleToAddNewGameStateFile(inputString, jsonFiles)) {
+                        createNewFileGameState(inputString, serializedMovie);
+                    } else {
+                        overwriteGameStateFile(inputString, serializedMovie);
+                    }
+                    break;
             case SHIFT:
                 String text = readFromText();
                 deSerializeFromText(text);
@@ -448,7 +452,8 @@ public class Main extends Application {
     }
 
 
-    public void createNewFileGameState(String input, String content) {
+
+    public void createNewFileGameState(String input, String content){
         try {
             File myObj = new File("src/main/java/jsonStrings/" + input + ".txt");
             FileWriter file = new FileWriter(myObj);
@@ -555,6 +560,7 @@ public class Main extends Application {
         alert.setHeaderText("Results:");
         alert.setContentText("YOU LOST!");
         alert.showAndWait();
+        System.exit(0);
     }
 
     public Cell canTeleport(Cell cell) {

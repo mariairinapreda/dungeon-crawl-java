@@ -5,6 +5,7 @@ import com.codecool.dungeoncrawl.logic.CellType;
 import com.codecool.dungeoncrawl.logic.GameMap;
 
 import java.util.Objects;
+import java.util.Random;
 
 public class Player extends Actor {
 
@@ -124,6 +125,8 @@ public class Player extends Actor {
     }
 
     public String getName() {
-        return "";
+        String[] list = {"Bad News Clutterbuck", "Fancypants Olivetti", "Elphonso Swackhamer", "Foncy Hooperbag", "Bowel Noises Whipkey", "Oinks Pennywhistle"};
+        Random r = new Random();
+        return list[r.nextInt(list.length)];
     }
 }
