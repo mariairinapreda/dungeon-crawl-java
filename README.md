@@ -22,7 +22,7 @@ New features include database saving, music, player-tracking camera movement.
 
 😊 Have fun !
 
-## Tehnologies:
+## Technologies:
 
 <p align="left">
   <img src="https://upload.wikimedia.org/wikipedia/commons/3/30/JavaFX_text_logo.png" width="75" alt="accessibility text">
