@@ -1,3 +1,7 @@
+<p align="left">
+  <img src="https://user-images.githubusercontent.com/89586309/197129375-da1ffe15-dfd7-4cd5-8627-584f410e4d6c.PNG" width="1000" alt="accessibility text">
+</p>
+
 # Dungeon Crawl 
 
 ## Story
